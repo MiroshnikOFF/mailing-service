@@ -2,3 +2,4 @@ Django
 django-crontab
 ipython
 psycopg2
+python-dotenv
