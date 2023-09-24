@@ -83,13 +83,13 @@ class ServiceCreateView(CreateView):
         if form.is_valid():
         #     if self.object.start < datetime.now().time() < self.object.finish:
             send(pk)
-        #     elif self.object.day:
-        #         send_once_day(pk, start_mailing)
-        #     elif self.object.week:
-        #         send_once_week(pk, start_mailing, stop_mailing)
-        #     elif self.object.month:
-        #         send_once_month(pk, start_mailing, stop_mailing)
-            return self.form_valid(form)
+        # if self.object.day:
+        #     send_once_day(pk, start_mailing)
+        # elif self.object.week:
+        #     send_once_week(pk, start_mailing)
+        # elif self.object.month:
+        #     send_once_month(pk, start_mailing)
+        #     return self.form_valid(form)
         else:
             return self.form_invalid(form)
 
