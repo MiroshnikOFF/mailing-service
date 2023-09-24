@@ -1,0 +1,26 @@
+{% load static %}
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Mailing service</title>
+    <link rel="stylesheet" type="text/css" href="{% static 'service/css/bootstrap.min.css' %}">
+</head>
+<body>
+<div class="d-flex flex-column flex-md-row align-items-center p-3 px-md-4 mb-3 bg-white border-bottom box-shadow">
+    <h1 class="my-0 mr-md-auto font-weight-normal">Сервис рассылки сообщений</h1>
+    <nav class="ms-5">
+        <a class="p-2 btn btn-outline-primary" href="{% url 'service:home' %}">Главная</a>
+        <a class="p-2 btn btn-outline-primary" href="{% url 'service:customers' %}">Клиенты</a>
+        <a class="p-2 btn btn-outline-primary" href="{% url 'service:services' %}">Рассылки</a>
+        <a class="p-2 btn btn-outline-primary" href="{% url 'service:messages' %}">Сообщения</a>
+    </nav>
+</div>
+
+{% block content %}
+{% endblock %}
+
+<!--<script src="{% static 'service/bootstrap.bundle.min.js' %}"></script>-->
+</body>
+</html>

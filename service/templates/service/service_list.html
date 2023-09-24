@@ -1,0 +1,35 @@
+{% extends 'service/base.html' %}
+
+{% block content %}
+<h2 align="center">Рассылки</h2>
+<a class="p-2 btn btn-outline-success" href="{% url 'service:service_create' %}">Создать рассылку</a>
+<table class="table">
+    <thead>
+    <tr>
+        <th scope="col"></th>
+        <th scope="col">Тема</th>
+        <th scope="col">Дата и время создания</th>
+<!--        <th scope="col">Статус рассылки</th>-->
+<!--        <th scope="col">Периодичность рассылки</th>-->
+<!--        <th scope="col">Сообщение</th>-->
+<!--        <th scope="col">Логи</th>-->
+    </tr>
+    </thead>
+    <tbody>
+    {% for object in object_list %}
+    <tr>
+        <th scope="row">{{ object.pk }}</th>
+        <td>{{ object.message }}</td>
+        <td>{{ object.date_time }}</td>
+        <td>
+            <a href="{% url 'service:service' object.pk %}">Смотреть</a>
+        </td>
+<!--        <td>{{ object.status }}</td>-->
+<!--        <td>{{ object.periodicity }}</td>-->
+<!--        <td>{{ object.message }}</td>-->
+<!--        <td>{{ object.log }}</td>-->
+    </tr>
+    {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

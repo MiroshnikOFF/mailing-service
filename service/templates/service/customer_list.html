@@ -1,0 +1,28 @@
+{% extends 'service/base.html' %}
+
+{% block content %}
+<h2 align="center">Клиенты</h2>
+<a class="p-2 btn btn-outline-success" href="{% url 'service:customer_create' %}">Добавить клиента</a>
+<table class="table">
+    <thead>
+    <tr>
+        <th scope="col"></th>
+        <th scope="col">ФИО</th>
+        <th scope="col">Почта</th>
+    </tr>
+    </thead>
+    <tbody>
+    {% for object in object_list %}
+    <tr>
+        <th scope="row">{{ object.pk }}</th>
+        <td>{{ object.name }}</td>
+        <td>{{ object.email }}</td>
+        <td>
+            <a href="{% url 'service:customer' object.pk %}">Смотреть</a>
+        </td>
+    </tr>
+    {% endfor %}
+    </tbody>
+</table>
+{% endblock %}
+
