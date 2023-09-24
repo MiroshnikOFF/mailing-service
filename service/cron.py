@@ -17,14 +17,15 @@ def send(pk):
 
 
 def send_once_day(pk, start):
-    send(pk)
-
-
-def send_once_week(pk, start, stop):
-    if start < datetime.now().time() < stop:
+    if start == datetime.now().time():
         send(pk)
 
 
-def send_once_month(pk, start, stop):
-    if start < datetime.now().time() < stop:
+def send_once_week(pk, start):
+    if start == datetime.now().time():
+        send(pk)
+
+
+def send_once_month(pk, start):
+    if start == datetime.now().time():
         send(pk)
