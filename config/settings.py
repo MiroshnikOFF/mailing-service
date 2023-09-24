@@ -152,5 +152,7 @@ EMAIL_HOST_PASSWORD = EMAIL_PASSWORD
 
 
 CRONJOBS = [
-    ('* * * * *', 'service.cron.send'),
+    ('* * * * *', 'service.cron.send_once_day'),
+    ('* * * * 0', 'service.cron.send_once_week'),
+    ('* * 1 * *', 'service.cron.send_once_month'),
 ]
