@@ -1,9 +1,9 @@
 from django.urls import path
 from service.apps import ServiceConfig
-from service.views import (HomeTemplateView, CustomerListView, ServiceListView, MessageListView, MessageDetailView,
-                           ServiceCreateView, MessageDeleteView, CustomerCreateView, CustomerDetailView,
+from service.views import (HomeTemplateView, CustomerListView, MailingListView, MessageListView, MessageDetailView,
+                           MailingCreateView, MessageDeleteView, CustomerCreateView, CustomerDetailView,
                            CustomerUpdateView, CustomerDeleteView, MessageCreateView, MessageUpdateView,
-                           ServiceDetailView, ServiceUpdateView, ServiceDeleteView)
+                           MailingDetailView, MailingUpdateView, MailingDeleteView)
 
 app_name = ServiceConfig.name
 
@@ -22,9 +22,9 @@ urlpatterns = [
     path('messages/update/<int:pk>/', MessageUpdateView.as_view(), name='message_update'),
     path('messages/delete/<int:pk>/', MessageDeleteView.as_view(), name='message_delete'),
 
-    path('services/', ServiceListView.as_view(), name='services'),
-    path('services/create/', ServiceCreateView.as_view(), name='service_create'),
-    path('services/<int:pk>/', ServiceDetailView.as_view(), name='service'),
-    path('services/update/<int:pk>/', ServiceUpdateView.as_view(), name='service_update'),
-    path('services/delete/<int:pk>/', ServiceDeleteView.as_view(), name='service_delete'),
+    path('services/', MailingListView.as_view(), name='mailings'),
+    path('services/create/', MailingCreateView.as_view(), name='mailing_create'),
+    path('services/<int:pk>/', MailingDetailView.as_view(), name='mailing'),
+    path('services/update/<int:pk>/', MailingUpdateView.as_view(), name='mailing_update'),
+    path('services/delete/<int:pk>/', MailingDeleteView.as_view(), name='mailing_delete'),
 ]

@@ -2,7 +2,9 @@
 
 {% block content %}
 <h2 align="center">Клиенты</h2>
-<a class="p-2 btn btn-outline-success" href="{% url 'service:customer_create' %}">Добавить клиента</a>
+<div class="col12 mb-5">
+    <a class="p-2 btn btn-outline-success" href="{% url 'service:customer_create' %}">Добавить клиента</a>
+</div>
 <table class="table">
     <thead>
     <tr>

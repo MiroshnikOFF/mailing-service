@@ -28,7 +28,7 @@ class Message(models.Model):
         verbose_name_plural = 'Сообщения'
 
 
-class Service(models.Model):
+class Mailing(models.Model):
     date_time = models.DateTimeField(auto_now=True, verbose_name='Дата и время создания')
     start = models.TimeField(default='00:00:00', verbose_name='Время начала рассылки')
     finish = models.TimeField(default='00:00:00', verbose_name='Время окончания рассылки')
@@ -43,15 +43,15 @@ class Service(models.Model):
         return f"{self.message}"
 
     class Meta:
-        verbose_name = 'Сервис'
-        verbose_name_plural = 'Сервисы'
+        verbose_name = 'Рассылка'
+        verbose_name_plural = 'Рассылки'
 
 
 class Log(models.Model):
     date_time_last_attempt = models.DateTimeField(auto_now=True, verbose_name='Дата и время последней попытки')
     attempt_status = models.CharField(max_length=150, verbose_name='Статус попытки')
     mail_server_response = models.CharField(max_length=150, verbose_name='Ответ почтового сервера')
-    service = models.ForeignKey(Service, on_delete=models.CASCADE, **NULLABLE, verbose_name='Рассылка')
+    service = models.ForeignKey(Mailing, on_delete=models.CASCADE, **NULLABLE, verbose_name='Рассылка')
 
     def __str__(self):
         return f"{self.date_time_last_attempt} {self.attempt_status}"

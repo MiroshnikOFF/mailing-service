@@ -27,9 +27,9 @@
                 {% endif %}
                 <p class="col-md-8 fs-4">{{ object.periodicity }}</p>
                 <p class="col-md-8 fs-4">{{ object.log }}</p>
-                <a class="btn btn-primary btn-lg" type="button" href="{% url 'service:services'%}">Закрыть</a>
-                <a class="btn btn-warning btn-lg" type="button" href="{% url 'service:service_update' object.pk %}">Редактировать</a>
-                <a class="btn btn-danger btn-lg" type="button" href="{% url 'service:service_delete' object.pk %}">Удалить</a>
+                <a class="btn btn-primary btn-lg" type="button" href="{% url 'service:mailings'%}">Закрыть</a>
+                <a class="btn btn-warning btn-lg" type="button" href="{% url 'service:mailing_update' object.pk %}">Редактировать</a>
+                <a class="btn btn-danger btn-lg" type="button" href="{% url 'service:mailing_delete' object.pk %}">Удалить</a>
             </div>
         </div>
     </div>

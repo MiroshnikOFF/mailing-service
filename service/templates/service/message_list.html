@@ -2,7 +2,9 @@
 
 {% block content %}
 <h2 align="center">Сообщения</h2>
-<a class="p-2 btn btn-outline-success" href="{% url 'service:message_create' %}">Добавить сообщение</a>
+<div class="col12 mb-5">
+    <a class="p-2 btn btn-outline-success" href="{% url 'service:message_create' %}">Добавить сообщение</a>
+</div>
 <table class="table">
     <thead>
     <tr>

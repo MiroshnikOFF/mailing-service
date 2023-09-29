@@ -2,7 +2,7 @@ from datetime import datetime
 from django.urls import reverse_lazy, reverse
 from django.views.generic import TemplateView, ListView, DetailView, CreateView, DeleteView, UpdateView
 
-from service.models import Service, Customer, Message
+from service.models import Mailing, Customer, Message
 from service.cron import send, send_once_day, send_once_week, send_once_month
 from config.settings import EMAIL
 
@@ -65,12 +65,12 @@ class MessageDeleteView(DeleteView):
     success_url = reverse_lazy('service:messages')
 
 
-class ServiceListView(ListView):
-    model = Service
+class MailingListView(ListView):
+    model = Mailing
 
 
-class ServiceCreateView(CreateView):
-    model = Service
+class MailingCreateView(CreateView):
+    model = Mailing
     fields = ('customers', 'message', 'start', 'finish', 'day', 'week', 'month',)
     success_url = reverse_lazy('service:services')
 
@@ -78,41 +78,36 @@ class ServiceCreateView(CreateView):
         form = self.get_form()
         self.object = form.save()
         pk = self.object.pk
-        start_mailing = self.object.start
         if form.is_valid():
             if self.object.start < datetime.now().time() < self.object.finish:
                 send(pk)
-            if self.object.day:
-                send_once_day(pk, start_mailing)
-            elif self.object.week:
-                send_once_week(pk, start_mailing)
-            elif self.object.month:
-                send_once_month(pk, start_mailing)
+            else:
+                self.object.status = 'создана'
             return self.form_valid(form)
         else:
             return self.form_invalid(form)
 
 
-class ServiceDetailView(DetailView):
-    model = Service
+class MailingDetailView(DetailView):
+    model = Mailing
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        service = Service.objects.get(pk=self.object.pk)
+        service = Mailing.objects.get(pk=self.object.pk)
         customers = service.customers.all()
         context['customers'] = customers
         return context
 
 
-class ServiceUpdateView(UpdateView):
-    model = Service
+class MailingUpdateView(UpdateView):
+    model = Mailing
     fields = ('customers', 'message', 'start', 'finish', 'day', 'week', 'month',)
 
     def get_success_url(self):
-        return reverse('service:service', args=[self.object.id])
+        return reverse('service:mailing', args=[self.object.id])
 
 
-class ServiceDeleteView(DeleteView):
-    model = Service
-    success_url = reverse_lazy('service:services')
+class MailingDeleteView(DeleteView):
+    model = Mailing
+    success_url = reverse_lazy('service:mailings')
 

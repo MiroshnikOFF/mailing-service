@@ -2,7 +2,7 @@ from django.contrib import admin
 from django import forms
 from django.contrib.admin.widgets import FilteredSelectMultiple
 
-from service.models import Customer, Message, Log, Service
+from service.models import Customer, Message, Log, Mailing
 
 
 @admin.register(Customer)
@@ -20,7 +20,7 @@ class LogAdmin(admin.ModelAdmin):
     list_display = ('date_time_last_attempt', 'attempt_status', 'mail_server_response',)
 
 
-@admin.register(Service)
+@admin.register(Mailing)
 class ServiceAdmin(admin.ModelAdmin):
     list_display = ('message',)
     filter_vertical = ('customers',)
