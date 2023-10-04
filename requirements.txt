@@ -5,3 +5,4 @@ django-extensions
 psycopg2
 python-dotenv
 croniter
+pillow
