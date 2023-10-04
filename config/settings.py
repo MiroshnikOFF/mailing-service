@@ -46,6 +46,7 @@ INSTALLED_APPS = [
     'django_extensions',
     'django_crontab',
     'service',
+    'users',
 ]
 
 MIDDLEWARE = [
@@ -136,7 +137,7 @@ STATICFILES_DIRS = [
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-# AUTH_USER_MODEL = 'users.User'
+AUTH_USER_MODEL = 'users.User'
 # LOGOUT_REDIRECT_URL = '/'
 # LOGIN_REDIRECT_URL = '/'
 # LOGIN_URL = '/users/'
