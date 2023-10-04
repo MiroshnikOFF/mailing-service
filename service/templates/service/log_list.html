@@ -1,0 +1,25 @@
+{% extends 'service/base.html' %}
+
+{% block content %}
+    <h2 align="center">Логи рассылки "{{ mailing }}"</h2>
+    <table class="table">
+        <thead>
+        <tr>
+            <th scope="col"></th>
+            <th scope="col">Дата и время последней попытки</th>
+            <th scope="col">Статус попытки</th>
+            <th scope="col">Ответ почтового сервера</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for object in object_list %}
+            <tr>
+                <th scope="row">{{ object.pk }}</th>
+                <td>{{ object.date_time_last_attempt }}</td>
+                <td>{{ object.attempt_status }}</td>
+                <td>{{ object.mail_server_response }}</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}

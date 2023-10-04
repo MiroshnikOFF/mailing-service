@@ -3,7 +3,8 @@ from service.apps import ServiceConfig
 from service.views import (HomeTemplateView, CustomerListView, MailingListView, MessageListView, MessageDetailView,
                            MailingCreateView, MessageDeleteView, CustomerCreateView, CustomerDetailView,
                            CustomerUpdateView, CustomerDeleteView, MessageCreateView, MessageUpdateView,
-                           MailingDetailView, MailingUpdateView, MailingDeleteView)
+                           MailingDetailView, MailingUpdateView, MailingDeleteView, get_report, LogListView,
+                           mailing_off, mailing_on)
 
 app_name = ServiceConfig.name
 
@@ -27,4 +28,9 @@ urlpatterns = [
     path('services/<int:pk>/', MailingDetailView.as_view(), name='mailing'),
     path('services/update/<int:pk>/', MailingUpdateView.as_view(), name='mailing_update'),
     path('services/delete/<int:pk>/', MailingDeleteView.as_view(), name='mailing_delete'),
+
+    path('services/report/', get_report, name='report'),
+    path('services/logs/<int:pk>/', LogListView.as_view(), name='logs'),
+    path('services/off/<int:pk>/', mailing_off, name='mailing_off'),
+    path('services/on/<int:pk>/', mailing_on, name='mailing_on'),
 ]

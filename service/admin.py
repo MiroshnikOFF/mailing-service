@@ -17,7 +17,7 @@ class MessageAdmin(admin.ModelAdmin):
 
 @admin.register(Log)
 class LogAdmin(admin.ModelAdmin):
-    list_display = ('date_time_last_attempt', 'attempt_status', 'mail_server_response',)
+    list_display = ('date_time_last_attempt', 'attempt_status', 'mail_server_response', 'mailing',)
 
 
 @admin.register(Mailing)

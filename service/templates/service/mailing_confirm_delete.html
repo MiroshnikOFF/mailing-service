@@ -9,7 +9,7 @@
             </div>
             <div class="card-body">
                 {% csrf_token %}
-                <p>Действительно хотите удалить рассылку"</p>
+                <p>Действительно хотите удалить рассылку "{{ object }}"</p>
                 <button type="submit" class="btn btn-outline-danger">
                     Удалить
                 </button>

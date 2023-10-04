@@ -1,37 +1,57 @@
 {% extends 'service/base.html' %}
 
 {% block content %}
-<main>
-    <div class="container py-4">
-        <div class="p-5 mb-4 bg-body-tertiary rounded-3">
-            <div class="container-fluid py-5">
-                <h3>Получатели</h3>
+    <h2 align="center">{{ object }}</h2>
+    <table class="table">
+        <thead>
+        <tr>
+            <th scope="col"></th>
+            <th scope="col">Статус</th>
+            <th scope="col">Начало</th>
+            <th scope="col">Окончание</th>
+            <th scope="col">Периодичность</th>
+            <th scope="col">Сообщение</th>
+            <th scope="col">Получатели</th>
+            <th scope="col">Логи</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr>
+            {% if object.is_activ %}
+                <th scope="row">Включена</th>
+            {% else %}
+                <th scope="row">Отключена</th>
+            {% endif %}
+            <td>{{ object.status }}</td>
+            <td>{{ object.start }}</td>
+            <td>{{ object.finish }}</td>
+            {% if object.day %}
+                <td>Раз в день</td>
+            {% elif object.week %}
+                <td>Раз в неделю</td>
+            {% elif object.month %}
+                <td>Раз в месяц</td>
+            {% else %}
+                <td>Не установлена</td>
+            {% endif %}
+            <td>
+                <a href="{% url 'service:message' object.message.pk %}">Смотреть</a>
+            </td>
+            <td>
                 {% for object in customers %}
-                <li>{{ object }}</li>
+                    <li>{{ object }}</li>
                 {% endfor %}
-                <h3>Тема рассылки</h3>
-                <p class="col-md-8 fs-4">{{ object.message }}</p>
-                <h3>Контент</h3>
-                <p class="col-md-8 fs-4">{{ object.message.body }}</p>
-                <p>Начало рассылки: {{ object.start }}</p>
-                <p>Окончание рассылки: {{ object.finish }}</p>
-                <h5>Периодичность рассылки</h5>
-                {% if object.day %}
-                <p>-раз а день</p>
-                {% elif object.week %}
-                <p>-раз а неделю</p>
-                {% elif object.month %}
-                <p>-раз а месяц</p>
-                {% else %}
-                <p>-не установлена</p>
-                {% endif %}
-                <p class="col-md-8 fs-4">{{ object.periodicity }}</p>
-                <p class="col-md-8 fs-4">{{ object.log }}</p>
-                <a class="btn btn-primary btn-lg" type="button" href="{% url 'service:mailings'%}">Закрыть</a>
-                <a class="btn btn-warning btn-lg" type="button" href="{% url 'service:mailing_update' object.pk %}">Редактировать</a>
-                <a class="btn btn-danger btn-lg" type="button" href="{% url 'service:mailing_delete' object.pk %}">Удалить</a>
-            </div>
-        </div>
-    </div>
-</main>
-{% endblock %}+
+            </td>
+            <td>
+                <a href="{% url 'service:logs' object.pk %}">Смотреть</a>
+            </td>
+            <td>
+                <a class="btn btn-outline-warning" href="{% url 'service:mailing_update' object.pk %}">Редактировать</a>
+                <a class="btn btn-outline-danger" href="{% url 'service:mailing_delete' object.pk %}">Удалить</a>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+{% endblock %}
+
+

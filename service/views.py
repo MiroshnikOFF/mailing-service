@@ -1,10 +1,14 @@
 from datetime import datetime
+
+from django.core.mail import send_mail
+from django.shortcuts import render
 from django.urls import reverse_lazy, reverse
 from django.views.generic import TemplateView, ListView, DetailView, CreateView, DeleteView, UpdateView
 
-from service.models import Mailing, Customer, Message
-from service.cron import send, send_once_day, send_once_week, send_once_month
-from config.settings import EMAIL
+from config.settings import EMAIL_HOST_USER
+from service.forms import CustomerForm, MessageForm, MailingForm
+from service.models import Mailing, Customer, Message, Log
+from service.cron import send
 
 
 class HomeTemplateView(TemplateView):
@@ -17,7 +21,7 @@ class CustomerListView(ListView):
 
 class CustomerCreateView(CreateView):
     model = Customer
-    fields = ('name', 'email', 'comment',)
+    form_class = CustomerForm
     success_url = reverse_lazy('service:customers')
 
 
@@ -27,7 +31,7 @@ class CustomerDetailView(DetailView):
 
 class CustomerUpdateView(UpdateView):
     model = Customer
-    fields = ('name', 'email', 'comment',)
+    form_class = CustomerForm
 
     def get_success_url(self):
         return reverse('service:customer', args=[self.object.pk])
@@ -44,7 +48,7 @@ class MessageListView(ListView):
 
 class MessageCreateView(CreateView):
     model = Message
-    fields = ('topic', 'body',)
+    form_class = MessageForm
     success_url = reverse_lazy('service:messages')
 
 
@@ -54,7 +58,7 @@ class MessageDetailView(DetailView):
 
 class MessageUpdateView(UpdateView):
     model = Message
-    fields = ('topic', 'body')
+    form_class = MessageForm
 
     def get_success_url(self):
         return reverse('service:message', args=[self.object.id])
@@ -71,21 +75,32 @@ class MailingListView(ListView):
 
 class MailingCreateView(CreateView):
     model = Mailing
-    fields = ('customers', 'message', 'start', 'finish', 'day', 'week', 'month',)
-    success_url = reverse_lazy('service:services')
+    form_class = MailingForm
+    success_url = reverse_lazy('service:mailings')
 
-    def post(self, request, *args, **kwargs):
-        form = self.get_form()
-        self.object = form.save()
-        pk = self.object.pk
-        if form.is_valid():
-            if self.object.start < datetime.now().time() < self.object.finish:
-                send(pk)
+    def form_valid(self, form):
+        mailing = form.save()
+        if mailing.start < datetime.now().time() < mailing.finish:
+            mailing.status = 'Запущена'
+            customers = mailing.customers.all()
+            recipient_list = [customer.email for customer in customers]
+            letter = send_mail(mailing.message.topic, mailing.message.body, EMAIL_HOST_USER, recipient_list)
+            if letter:
+                mailing.status = 'Завершена'
+                status = 'Успешно'
+                server_response = 'Отправлено'
             else:
-                self.object.status = 'создана'
-            return self.form_valid(form)
+                mailing.status = 'Создана'
+                status = 'Не успешно'
+                server_response = 'Не отправлено'
+
+            Log.objects.create(date_time_last_attempt=datetime.now(), attempt_status=status,
+                               mail_server_response=server_response,
+                               mailing=mailing)
         else:
-            return self.form_invalid(form)
+            mailing.status = 'Создана'
+
+        return super().form_valid(form)
 
 
 class MailingDetailView(DetailView):
@@ -101,7 +116,7 @@ class MailingDetailView(DetailView):
 
 class MailingUpdateView(UpdateView):
     model = Mailing
-    fields = ('customers', 'message', 'start', 'finish', 'day', 'week', 'month',)
+    form_class = MailingForm
 
     def get_success_url(self):
         return reverse('service:mailing', args=[self.object.id])
@@ -110,4 +125,46 @@ class MailingUpdateView(UpdateView):
 class MailingDeleteView(DeleteView):
     model = Mailing
     success_url = reverse_lazy('service:mailings')
+
+
+def get_report(request):
+    context = {
+        'mailings_done': Mailing.objects.filter(status='Завершена')
+    }
+    return render(request, 'service/report.html', context=context)
+
+
+def mailing_off(request, pk):
+    mailing = Mailing.objects.get(pk=pk)
+    mailing.is_activ = False
+    mailing.save()
+    context = {
+        'object_list': Mailing.objects.all()
+    }
+    return render(request, 'service/mailing_list.html', context=context)
+
+
+def mailing_on(request, pk):
+    mailing = Mailing.objects.get(pk=pk)
+    mailing.is_activ = True
+    mailing.save()
+    context = {
+        'object_list': Mailing.objects.all()
+    }
+    return render(request, 'service/mailing_list.html', context=context)
+
+
+class LogListView(ListView):
+    model = Log
+
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        queryset = queryset.filter(mailing=self.kwargs.get('pk'))
+        return queryset
+
+    def get_context_data(self, *args, **kwargs):
+        context_data = super().get_context_data(*args, **kwargs)
+        mailing = Mailing.objects.get(pk=self.kwargs.get('pk'))
+        context_data['mailing'] = mailing
+        return context_data
 

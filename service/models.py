@@ -38,6 +38,7 @@ class Mailing(models.Model):
     status = models.CharField(**NULLABLE, max_length=150, verbose_name='Статус рассылки')
     customers = models.ManyToManyField(Customer, verbose_name='Клиенты')
     message = models.ForeignKey(Message, on_delete=models.SET_NULL, **NULLABLE, verbose_name='Сообщение')
+    is_activ = models.BooleanField(default=True, verbose_name='Активная')
 
     def __str__(self):
         return f"{self.message}"
@@ -51,7 +52,7 @@ class Log(models.Model):
     date_time_last_attempt = models.DateTimeField(auto_now=True, verbose_name='Дата и время последней попытки')
     attempt_status = models.CharField(max_length=150, verbose_name='Статус попытки')
     mail_server_response = models.CharField(max_length=150, verbose_name='Ответ почтового сервера')
-    service = models.ForeignKey(Mailing, on_delete=models.CASCADE, **NULLABLE, verbose_name='Рассылка')
+    mailing = models.ForeignKey(Mailing, on_delete=models.CASCADE, **NULLABLE, verbose_name='Рассылка')
 
     def __str__(self):
         return f"{self.date_time_last_attempt} {self.attempt_status}"

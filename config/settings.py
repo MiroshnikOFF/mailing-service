@@ -16,8 +16,6 @@ from dotenv import load_dotenv
 
 load_dotenv()
 DB_PASSWORD = os.getenv('DB_PASSWORD')
-EMAIL = os.getenv('EMAIL')
-EMAIL_PASSWORD = os.getenv('EMAIL_PASSWORD')
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -139,8 +137,8 @@ STATICFILES_DIRS = [
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 
-EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
-# EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+# EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 
 # MAIL.RU
 
@@ -148,44 +146,44 @@ EMAIL_HOST = 'smtp.mail.ru'
 EMAIL_PORT = 2525
 EMAIL_USE_TLS = True
 EMAIL_USE_SSL = False
-EMAIL_HOST_USER = EMAIL
-EMAIL_HOST_PASSWORD = EMAIL_PASSWORD
+EMAIL_HOST_USER = os.getenv('EMAIL')
+EMAIL_HOST_PASSWORD = os.getenv('EMAIL_PASSWORD')
 
 
 CRONJOBS = [
     ('* * * * *', 'service.cron.send_once_day'),
-#     ('* * * * 0', 'service.cron.send_once_week'),
-#     ('* * 1 * *', 'service.cron.send_once_month'),
+    ('* * * * 0', 'service.cron.send_once_week'),
+    ('* * 1 * *', 'service.cron.send_once_month'),
 ]
 
 
-LOGGING = {
-    'version': 1,
-    'disable_existing_loggers': False,
-    'formatters': {
-        'console': {
-            'format': '%(name)-12s %(levelname)-8s %(message)s'
-        },
-        'file': {
-            'format': '%(asctime)s %(name)-12s %(levelname)-8s %(message)s'
-        }
-    },
-    'handlers': {
-        'console': {
-            'class': 'logging.StreamHandler',
-            'formatter': 'console'
-        },
-        'file': {
-            'level': 'DEBUG',
-            'class': 'logging.FileHandler',
-            'formatter': 'file',
-            'filename': 'debug.log'
-        }
-    },
-    'loggers': {
-        'main': {
-            'level': 'DEBUG',
-            'handlers': ['console', 'file']
-        }
-    }
-}
+# LOGGING = {
+#     'version': 1,
+#     'disable_existing_loggers': False,
+#     'formatters': {
+#         'console': {
+#             'format': '%(name)-12s %(levelname)-8s %(message)s'
+#         },
+#         'file': {
+#             'format': '%(asctime)s %(name)-12s %(levelname)-8s %(message)s'
+#         }
+#     },
+#     'handlers': {
+#         'console': {
+#             'class': 'logging.StreamHandler',
+#             'formatter': 'console'
+#         },
+#         'file': {
+#             'level': 'DEBUG',
+#             'class': 'logging.FileHandler',
+#             'formatter': 'file',
+#             'filename': 'debug.log'
+#         }
+#     },
+#     'loggers': {
+#         'main': {
+#             'level': 'DEBUG',
+#             'handlers': ['console', 'file']
+#         }
+#     }
+# }
