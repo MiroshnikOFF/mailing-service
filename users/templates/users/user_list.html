@@ -1,0 +1,54 @@
+{% extends 'service/base.html' %}
+
+{% block content %}
+    <h2 align="center">Пользователи</h2>
+    {#    <div class="col12 mb-5">#}
+    {#        <a class="p-2 btn btn-outline-success" href="{% url 'service:mailing_create' %}">Создать рассылку</a>#}
+    {#        <a class="p-2 btn btn-outline-primary" href="{% url 'service:report' %}">Отчет проведенных рассылок</a>#}
+    {#    </div>#}
+    <table class="table">
+        <thead>
+        <tr>
+            <th scope="col"></th>
+            <th scope="col">Email</th>
+            <th scope="col">Имя</th>
+            <th scope="col">Фамилие</th>
+            <th scope="col">Телефон</th>
+            <th scope="col">Активность</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for object in object_list %}
+            <tr>
+                <th scope="row">{{ object.pk }}</th>
+                <td>{{ object.email }}</td>
+                <td>{{ object.first_name }}</td>
+                <td>{{ object.last_name }}</td>
+                {% if object.phone %}
+                    <td>{{ object.phone }}</td>
+                {% else %}
+                    <td>Не указан</td>
+                {% endif %}
+                <td>
+                    {% if object.is_active %}
+                        Активен
+                    {% else %}
+                        Заблокирован
+                    {% endif %}
+                </td>
+                {% if perms.users.set_is_active_user %}
+                    <td>
+                        {% if object.is_active %}
+                            <a class="btn btn-outline-danger"
+                               href="{% url 'users:user_activity' object.pk %}">Заблокировать</a>
+                        {% else %}
+                            <a class="btn btn-outline-success"
+                               href="{% url 'users:user_activity' object.pk %}">Активировать</a>
+                        {% endif %}
+                    </td>
+                {% endif %}
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}
