@@ -1,17 +1,23 @@
 {% extends 'service/base.html' %}
 
 {% block content %}
-<main>
-    <div class="container py-4">
-        <div class="p-5 mb-4 bg-body-tertiary rounded-3">
-            <div class="container-fluid py-5">
-                <h1 class="display-5 fw-bold">{{ object.topic }}</h1>
-                <p class="col-md-8 fs-4">{{ object.body }}</p>
-                <a class="btn btn-primary btn-lg" type="button" href="{% url 'service:messages'%}">Закрыть</a>
-                <a class="btn btn-warning btn-lg" type="button" href="{% url 'service:message_update' object.pk %}">Редактировать</a>
-                <a class="btn btn-danger btn-lg" type="button" href="{% url 'service:message_delete' object.pk %}">Удалить</a>
+    <main>
+        <div class="container py-4">
+            <div class="p-5 mb-4 bg-body-tertiary rounded-3">
+                <div class="container-fluid py-5">
+                    <h1 class="display-5 fw-bold">{{ object.topic }}</h1>
+                    <p class="col-md-8 fs-4">{{ object.body }}</p>
+                    <a class="btn btn-primary btn-lg" type="button" href="{% url 'service:messages' %}">Закрыть</a>
+                    {% if perms.service.change_message %}
+                        <a class="btn btn-warning btn-lg" type="button"
+                           href="{% url 'service:message_update' object.pk %}">Редактировать</a>
+                    {% endif %}
+                    {% if perms.service.delete_message %}
+                        <a class="btn btn-danger btn-lg" type="button"
+                           href="{% url 'service:message_delete' object.pk %}">Удалить</a>
+                    {% endif %}
+                </div>
             </div>
         </div>
-    </div>
-</main>
+    </main>
 {% endblock %}

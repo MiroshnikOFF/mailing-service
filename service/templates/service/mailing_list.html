@@ -3,7 +3,9 @@
 {% block content %}
     <h2 align="center">Рассылки</h2>
     <div class="col12 mb-5">
-        <a class="p-2 btn btn-outline-success" href="{% url 'service:mailing_create' %}">Создать рассылку</a>
+        {% if perms.service.add_mailing %}
+            <a class="p-2 btn btn-outline-success" href="{% url 'service:mailing_create' %}">Создать рассылку</a>
+        {% endif %}
         <a class="p-2 btn btn-outline-primary" href="{% url 'service:report' %}">Отчет проведенных рассылок</a>
     </div>
     <table class="table">
@@ -19,23 +21,22 @@
         {% for object in object_list %}
             <tr>
                 <th scope="row">{{ object.pk }}</th>
-                <td>{{ object.message }}</td>
+                <td>
+                    <a href="{% url 'service:mailing' object.pk %}">{{ object }}</a>
+                </td>
                 <td>{{ object.date_time }}</td>
                 <td>{{ object.status }}</td>
-                <td>
-                    <a href="{% url 'service:mailing' object.pk %}">Смотреть</a>
-                </td>
-                <td>
-                    {% if object.is_activ %}
-                        <a class="btn btn-outline-warning"
-                           href="{% url 'service:mailing_off' object.pk %}">Отключить</a>
-                    {% else %}
-                        <a class="btn btn-outline-warning"
-                           href="{% url 'service:mailing_on' object.pk %}">Включить</a>
-                    {% endif %}
-                </td>
-
-
+                {% if perms.service.set_is_active_mailing %}
+                    <td>
+                        {% if object.is_active %}
+                            <a class="btn btn-outline-danger"
+                               href="{% url 'service:mailing_activity' object.pk %}">Отключить</a>
+                        {% else %}
+                            <a class="btn btn-outline-success"
+                               href="{% url 'service:mailing_activity' object.pk %}">Включить</a>
+                        {% endif %}
+                    </td>
+                {% endif %}
             </tr>
         {% endfor %}
         </tbody>

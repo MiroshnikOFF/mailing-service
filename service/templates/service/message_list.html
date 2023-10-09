@@ -1,29 +1,31 @@
 {% extends 'service/base.html' %}
 
 {% block content %}
-<h2 align="center">Сообщения</h2>
-<div class="col12 mb-5">
-    <a class="p-2 btn btn-outline-success" href="{% url 'service:message_create' %}">Добавить сообщение</a>
-</div>
-<table class="table">
-    <thead>
-    <tr>
-        <th scope="col"></th>
-        <th scope="col">Тема письма</th>
-        <th scope="col">Текст письма</th>
-    </tr>
-    </thead>
-    <tbody>
-    {% for object in object_list %}
-    <tr>
-        <th scope="row">{{ object.pk }}</th>
-        <td>{{ object.topic }}</td>
-        <td>
-            <a href="{% url 'service:message' object.pk %}">Смотреть</a>
-        </td>
-    </tr>
-    {% endfor %}
-    </tbody>
-</table>
+    <h2 align="center">Сообщения</h2>
+    {% if perms.service.add_message %}
+        <div class="col12 mb-5">
+            <a class="p-2 btn btn-outline-success" href="{% url 'service:message_create' %}">Добавить сообщение</a>
+        </div>
+    {% endif %}
+    <table class="table">
+        <thead>
+        <tr>
+            <th scope="col"></th>
+            <th scope="col">Тема письма</th>
+            <th scope="col">Текст письма</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for object in object_list %}
+            <tr>
+                <th scope="row">{{ object.pk }}</th>
+                <td>{{ object.topic }}</td>
+                <td>
+                    <a href="{% url 'service:message' object.pk %}">Смотреть</a>
+                </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
 {% endblock %}
 

@@ -1,6 +1,13 @@
 {% extends 'service/base.html' %}
 
 {% block content %}
-<h2 align="center">Главная страница</h2>
+    <h2 align="center">Главная страница</h2>
+    <h3>Количество рассылок всего: {{ mailings_all }}</h3>
+    <h3>Количество активных рассылок: {{ mailing_active }}</h3>
+    <h3>Количество уникальных клиентов для рассылок: {{ unique_customers }}</h3>
+    {% for article in blog %}
+        <p>{{ article }}</p>
+    {% endfor %}
+
 {% endblock %}
 

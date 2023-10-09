@@ -6,22 +6,31 @@
         <thead>
         <tr>
             <th scope="col"></th>
-            <th scope="col">Тема</th>
-            <th scope="col">Дата и время создания</th>
-            <th scope="col">Статус рассылки</th>
+            <th scope="col">Рассылка</th>
+            <th scope="col">Дата и время последней попытки</th>
+            <th scope="col">Статус попытки</th>
+            <th scope="col">Ответ почтового сервера</th>
+            <th scope="col">Дата следующей отправки</th>
         </tr>
         </thead>
         <tbody>
         {% for object in mailings_done %}
-            <tr>
-                <th scope="row">{{ object.pk }}</th>
-                <td>{{ object.message }}</td>
-                <td>{{ object.date_time }}</td>
-                <td>{{ object.status }}</td>
-                <td>
-                    <a href="{% url 'service:mailing' object.pk %}">Смотреть</a>
-                </td>
-            </tr>
+            {% if user.is_staff or object.mailing.user == user %}
+                <tr>
+                    <th scope="row">{{ object.pk }}</th>
+                    <td>
+                        {% if object.mailing %}
+                            <a href="{% url 'service:mailing' object.mailing.pk %}">{{ object.mailing }}</a>
+                        {% else %}
+                            Удалена
+                        {% endif %}
+                    </td>
+                    <td>{{ object.date_time_last_attempt }}</td>
+                    <td>{{ object.attempt_status }}</td>
+                    <td>{{ object.mail_server_response }}</td>
+                    <td>{{ object.mailing.next_run }}</td>
+                </tr>
+            {% endif %}
         {% endfor %}
         </tbody>
     </table>

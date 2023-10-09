@@ -10,6 +10,7 @@
             <th scope="col">Начало</th>
             <th scope="col">Окончание</th>
             <th scope="col">Периодичность</th>
+            <th scope="col">Дата следующей отправки</th>
             <th scope="col">Сообщение</th>
             <th scope="col">Получатели</th>
             <th scope="col">Логи</th>
@@ -17,7 +18,7 @@
         </thead>
         <tbody>
         <tr>
-            {% if object.is_activ %}
+            {% if object.is_active %}
                 <th scope="row">Включена</th>
             {% else %}
                 <th scope="row">Отключена</th>
@@ -34,6 +35,7 @@
             {% else %}
                 <td>Не установлена</td>
             {% endif %}
+            <td>{{ object.next_run }}</td>
             <td>
                 <a href="{% url 'service:message' object.message.pk %}">Смотреть</a>
             </td>
@@ -46,8 +48,13 @@
                 <a href="{% url 'service:logs' object.pk %}">Смотреть</a>
             </td>
             <td>
-                <a class="btn btn-outline-warning" href="{% url 'service:mailing_update' object.pk %}">Редактировать</a>
-                <a class="btn btn-outline-danger" href="{% url 'service:mailing_delete' object.pk %}">Удалить</a>
+                {% if perms.service.change_mailing %}
+                    <a class="btn btn-outline-warning"
+                       href="{% url 'service:mailing_update' object.pk %}">Редактировать</a>
+                {% endif %}
+                {% if perms.service.delete_mailing %}
+                    <a class="btn btn-outline-danger" href="{% url 'service:mailing_delete' object.pk %}">Удалить</a>
+                {% endif %}
             </td>
         </tr>
         </tbody>

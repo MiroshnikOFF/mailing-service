@@ -12,10 +12,31 @@
     <h1 class="my-0 mr-md-auto font-weight-normal">Сервис рассылки сообщений</h1>
     <nav class="ms-5">
         <a class="p-2 btn btn-outline-primary" href="{% url 'service:home' %}">Главная</a>
-        <a class="p-2 btn btn-outline-primary" href="{% url 'service:customers' %}">Клиенты</a>
+        {% if perms.service.view_customer %}
+            <a class="p-2 btn btn-outline-primary" href="{% url 'service:customers' %}">Клиенты</a>
+        {% endif %}
         <a class="p-2 btn btn-outline-primary" href="{% url 'service:mailings' %}">Рассылки</a>
         <a class="p-2 btn btn-outline-primary" href="{% url 'service:messages' %}">Сообщения</a>
+        {% if perms.users.view_user %}
+            <a class="p-2 btn btn-outline-primary" href="{% url 'users:users_list' %}">Пользователи</a>
+        {% endif %}
     </nav>
+</div>
+<div class="col-sm-4 offset-md-1 py-4">
+    <ul class="list-unstyled">
+        {% if user.is_authenticated %}
+            <li><a href="{% url 'users:profile' %}">Профиль</a></li>
+            <li><a href="{% url 'users:logout' %}">Выход</a></li>
+            {% if not user.is_verified %}
+                <a class="p-2 btn btn-outline-warning" href="{% url 'users:verification' %}">Подтвердите электронную
+                    почту</a>
+            {% endif %}
+        {% else %}
+            <li><a href="{% url 'users:login' %}">Вход</a></li>
+            <li><a href="{% url 'users:register' %}">Регистрация</a></li>
+        {% endif %}
+
+    </ul>
 </div>
 
 {% block content %}
