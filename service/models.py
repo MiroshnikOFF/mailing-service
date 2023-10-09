@@ -1,5 +1,7 @@
 from django.db import models
 
+from config import settings
+
 NULLABLE = {'null': True, 'blank': True}
 
 
@@ -7,6 +9,8 @@ class Customer(models.Model):
     name = models.CharField(max_length=150, verbose_name='ФИО')
     email = models.EmailField(unique=True, verbose_name='Почта')
     comment = models.TextField(**NULLABLE, verbose_name='Комментарий')
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, **NULLABLE,
+                             verbose_name='Пользователь')
 
     def __str__(self):
         return f"{self.name} ({self.email})"
@@ -19,6 +23,8 @@ class Customer(models.Model):
 class Message(models.Model):
     topic = models.CharField(max_length=200, verbose_name='Тема письма')
     body = models.TextField(**NULLABLE, verbose_name='Содержимое письма')
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, **NULLABLE,
+                             verbose_name='Пользователь')
 
     def __str__(self):
         return self.topic
@@ -37,8 +43,11 @@ class Mailing(models.Model):
     month = models.BooleanField(default=False, verbose_name='Раз в месяц')
     status = models.CharField(**NULLABLE, max_length=150, verbose_name='Статус рассылки')
     customers = models.ManyToManyField(Customer, verbose_name='Клиенты')
-    message = models.ForeignKey(Message, on_delete=models.SET_NULL, **NULLABLE, verbose_name='Сообщение')
-    is_activ = models.BooleanField(default=True, verbose_name='Активная')
+    message = models.ForeignKey(Message, on_delete=models.CASCADE, **NULLABLE, verbose_name='Сообщение')
+    is_active = models.BooleanField(default=True, verbose_name='Активная')
+    next_run = models.DateField(**NULLABLE, verbose_name='Дата следующей рассылки')
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, **NULLABLE,
+                             verbose_name='Пользователь')
 
     def __str__(self):
         return f"{self.message}"
@@ -46,13 +55,19 @@ class Mailing(models.Model):
     class Meta:
         verbose_name = 'Рассылка'
         verbose_name_plural = 'Рассылки'
+        permissions = [
+            (
+                'set_is_active_mailing',
+                'Can active mailing'
+            )
+        ]
 
 
 class Log(models.Model):
     date_time_last_attempt = models.DateTimeField(auto_now=True, verbose_name='Дата и время последней попытки')
     attempt_status = models.CharField(max_length=150, verbose_name='Статус попытки')
     mail_server_response = models.CharField(max_length=150, verbose_name='Ответ почтового сервера')
-    mailing = models.ForeignKey(Mailing, on_delete=models.CASCADE, **NULLABLE, verbose_name='Рассылка')
+    mailing = models.ForeignKey(Mailing, on_delete=models.SET_NULL, **NULLABLE, verbose_name='Рассылка')
 
     def __str__(self):
         return f"{self.date_time_last_attempt} {self.attempt_status}"
@@ -60,11 +75,3 @@ class Log(models.Model):
     class Meta:
         verbose_name = 'Лог'
         verbose_name_plural = 'Логи'
-
-
-
-
-
-
-
-

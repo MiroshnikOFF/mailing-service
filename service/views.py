@@ -1,35 +1,62 @@
 from datetime import datetime
 
-from django.core.mail import send_mail
-from django.shortcuts import render
+from django.contrib.auth.decorators import permission_required, login_required
+from django.contrib.auth.mixins import PermissionRequiredMixin, LoginRequiredMixin
+from django.shortcuts import render, redirect
 from django.urls import reverse_lazy, reverse
 from django.views.generic import TemplateView, ListView, DetailView, CreateView, DeleteView, UpdateView
 
-from config.settings import EMAIL_HOST_USER
+from blog.models import Blog
 from service.forms import CustomerForm, MessageForm, MailingForm
 from service.models import Mailing, Customer, Message, Log
-from service.cron import send
+from service.services import send
 
 
 class HomeTemplateView(TemplateView):
     template_name = 'service/home.html'
 
+    def get_context_data(self, **kwargs):
+        context_data = super().get_context_data(**kwargs)
+        count_mailings_all = Mailing.objects.count()
+        count_mailing_inactive = Mailing.objects.filter(status='Завершена').count()
+        count_mailing_active = count_mailings_all - count_mailing_inactive
+        count_unique_customers = Customer.objects.values('email').distinct().count()
+        random_articles = Blog.objects.order_by('?')[:3]
 
-class CustomerListView(ListView):
+        context_data['mailings_all'] = count_mailings_all
+        context_data['mailing_active'] = count_mailing_active
+        context_data['unique_customers'] = count_unique_customers
+        context_data['blog'] = random_articles
+
+        return context_data
+
+
+class CustomerListView(LoginRequiredMixin, PermissionRequiredMixin, ListView):
+    permission_required = 'service.view_customer'
     model = Customer
 
+    def get_queryset(self):
+        queryset = Customer.objects.filter(user=self.request.user)
+        return queryset
 
-class CustomerCreateView(CreateView):
+
+class CustomerCreateView(LoginRequiredMixin, CreateView):
     model = Customer
     form_class = CustomerForm
     success_url = reverse_lazy('service:customers')
 
+    def form_valid(self, form):
+        self.object = form.save()
+        self.object.user = self.request.user
+        self.object.save()
+        return super().form_valid(form)
 
-class CustomerDetailView(DetailView):
+
+class CustomerDetailView(LoginRequiredMixin, DetailView):
     model = Customer
 
 
-class CustomerUpdateView(UpdateView):
+class CustomerUpdateView(LoginRequiredMixin, UpdateView):
     model = Customer
     form_class = CustomerForm
 
@@ -37,26 +64,42 @@ class CustomerUpdateView(UpdateView):
         return reverse('service:customer', args=[self.object.pk])
 
 
-class CustomerDeleteView(DeleteView):
+class CustomerDeleteView(LoginRequiredMixin, DeleteView):
     model = Customer
     success_url = reverse_lazy('service:customers')
 
 
-class MessageListView(ListView):
+class MessageListView(LoginRequiredMixin, ListView):
     model = Message
 
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        user = self.request.user
+        if user.is_staff:
+            return queryset
+        queryset = Message.objects.filter(user=user)
+        return queryset
 
-class MessageCreateView(CreateView):
+
+class MessageCreateView(LoginRequiredMixin, PermissionRequiredMixin, CreateView):
+    permission_required = 'service.add_message'
     model = Message
     form_class = MessageForm
     success_url = reverse_lazy('service:messages')
 
+    def form_valid(self, form):
+        self.object = form.save()
+        self.object.user = self.request.user
+        self.object.save()
+        return super().form_valid(form)
 
-class MessageDetailView(DetailView):
+
+class MessageDetailView(LoginRequiredMixin, DetailView):
     model = Message
 
 
-class MessageUpdateView(UpdateView):
+class MessageUpdateView(LoginRequiredMixin, PermissionRequiredMixin, UpdateView):
+    permission_required = 'service.change_message'
     model = Message
     form_class = MessageForm
 
@@ -64,46 +107,49 @@ class MessageUpdateView(UpdateView):
         return reverse('service:message', args=[self.object.id])
 
 
-class MessageDeleteView(DeleteView):
+class MessageDeleteView(LoginRequiredMixin, PermissionRequiredMixin, DeleteView):
+    permission_required = 'service.delete_message'
     model = Message
     success_url = reverse_lazy('service:messages')
 
 
-class MailingListView(ListView):
+class MailingListView(LoginRequiredMixin, ListView):
     model = Mailing
 
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        user = self.request.user
+        if user.is_staff:
+            return queryset
+        queryset = Mailing.objects.filter(user=user)
+        return queryset
 
-class MailingCreateView(CreateView):
+
+class MailingCreateView(LoginRequiredMixin, PermissionRequiredMixin, CreateView):
+    permission_required = 'service.add_mailing'
     model = Mailing
     form_class = MailingForm
     success_url = reverse_lazy('service:mailings')
 
+    def get_form_kwargs(self):
+        form_kwargs = super().get_form_kwargs()
+        form_kwargs['user'] = self.request.user
+        return form_kwargs
+
     def form_valid(self, form):
+        self.object = form.save()
+        self.object.user = self.request.user
+        self.object.save()
+
         mailing = form.save()
         if mailing.start < datetime.now().time() < mailing.finish:
-            mailing.status = 'Запущена'
-            customers = mailing.customers.all()
-            recipient_list = [customer.email for customer in customers]
-            letter = send_mail(mailing.message.topic, mailing.message.body, EMAIL_HOST_USER, recipient_list)
-            if letter:
-                mailing.status = 'Завершена'
-                status = 'Успешно'
-                server_response = 'Отправлено'
-            else:
-                mailing.status = 'Создана'
-                status = 'Не успешно'
-                server_response = 'Не отправлено'
-
-            Log.objects.create(date_time_last_attempt=datetime.now(), attempt_status=status,
-                               mail_server_response=server_response,
-                               mailing=mailing)
-        else:
-            mailing.status = 'Создана'
-
+            mailing.status = send(mailing.pk)
+        mailing.status = 'Создана'
+        mailing.next_run = datetime.now().date()
         return super().form_valid(form)
 
 
-class MailingDetailView(DetailView):
+class MailingDetailView(LoginRequiredMixin, DetailView):
     model = Mailing
 
     def get_context_data(self, **kwargs):
@@ -114,47 +160,48 @@ class MailingDetailView(DetailView):
         return context
 
 
-class MailingUpdateView(UpdateView):
+class MailingUpdateView(LoginRequiredMixin, PermissionRequiredMixin, UpdateView):
+    permission_required = 'service.change_mailing'
     model = Mailing
     form_class = MailingForm
 
     def get_success_url(self):
         return reverse('service:mailing', args=[self.object.id])
 
+    def get_form_kwargs(self):
+        form_kwargs = super().get_form_kwargs()
+        form_kwargs['user'] = self.request.user
+        return form_kwargs
 
-class MailingDeleteView(DeleteView):
+
+class MailingDeleteView(LoginRequiredMixin, PermissionRequiredMixin, DeleteView):
+    permission_required = 'service.delete_mailing'
     model = Mailing
     success_url = reverse_lazy('service:mailings')
 
 
 def get_report(request):
     context = {
-        'mailings_done': Mailing.objects.filter(status='Завершена')
+        'mailings_done': Log.objects.all()
     }
     return render(request, 'service/report.html', context=context)
 
 
-def mailing_off(request, pk):
+@login_required
+@permission_required('service.set_is_activ_mailing')
+def mailing_toggle_activity(request, pk):
     mailing = Mailing.objects.get(pk=pk)
-    mailing.is_activ = False
+    if mailing.is_active:
+        mailing.is_active = False
+        mailing.status = 'Завершена'
+    else:
+        mailing.is_active = True
+        mailing.status = 'Создана'
     mailing.save()
-    context = {
-        'object_list': Mailing.objects.all()
-    }
-    return render(request, 'service/mailing_list.html', context=context)
+    return redirect(reverse_lazy('service:mailings'))
 
 
-def mailing_on(request, pk):
-    mailing = Mailing.objects.get(pk=pk)
-    mailing.is_activ = True
-    mailing.save()
-    context = {
-        'object_list': Mailing.objects.all()
-    }
-    return render(request, 'service/mailing_list.html', context=context)
-
-
-class LogListView(ListView):
+class LogListView(LoginRequiredMixin, ListView):
     model = Log
 
     def get_queryset(self):
@@ -167,4 +214,3 @@ class LogListView(ListView):
         mailing = Mailing.objects.get(pk=self.kwargs.get('pk'))
         context_data['mailing'] = mailing
         return context_data
-

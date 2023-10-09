@@ -15,18 +15,23 @@ class CustomerForm(StyleFormMixin, forms.ModelForm):
 
     class Meta:
         model = Customer
-        fields = '__all__'
+        exclude = ('user',)
 
 
 class MessageForm(StyleFormMixin, forms.ModelForm):
 
     class Meta:
         model = Message
-        fields = '__all__'
+        exclude = ('user',)
 
 
 class MailingForm(StyleFormMixin, forms.ModelForm):
 
     class Meta:
         model = Mailing
-        exclude = ('status', 'is_activ',)
+        exclude = ('status', 'is_active', 'next_run', 'user',)
+
+    def __init__(self, user, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['customers'].queryset = Customer.objects.filter(user=user)
+        self.fields['message'].queryset = Message.objects.filter(user=user)

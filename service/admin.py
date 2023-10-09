@@ -1,6 +1,4 @@
 from django.contrib import admin
-from django import forms
-from django.contrib.admin.widgets import FilteredSelectMultiple
 
 from service.models import Customer, Message, Log, Mailing
 
@@ -24,17 +22,3 @@ class LogAdmin(admin.ModelAdmin):
 class ServiceAdmin(admin.ModelAdmin):
     list_display = ('message',)
     filter_vertical = ('customers',)
-
-
-# class ServiceAdminForm(forms.ModelForm):
-#     class Meta:
-#         model = Service
-#         fields = '__all__'
-#         widgets = {
-#             'customers': FilteredSelectMultiple(verbose_name='Клиенты', is_stacked=False),
-#         }
-#
-#
-# @admin.register(Service)
-# class MovieAdmin(admin.ModelAdmin):
-#     form = ServiceAdminForm
