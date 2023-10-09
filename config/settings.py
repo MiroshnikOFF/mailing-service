@@ -15,7 +15,6 @@ from pathlib import Path
 from dotenv import load_dotenv
 
 load_dotenv()
-DB_PASSWORD = os.getenv('DB_PASSWORD')
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -25,7 +24,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-17!8a6w(mqhk35(k2e(jeijimsx67grt5q67m@!+g9lfnpgwq7'
+SECRET_KEY = os.getenv('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -47,6 +46,7 @@ INSTALLED_APPS = [
     'django_crontab',
     'service',
     'users',
+    'blog',
 ]
 
 MIDDLEWARE = [
@@ -86,9 +86,9 @@ WSGI_APPLICATION = 'config.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'mailing_service',
-        'USER': 'postgres',
-        'PASSWORD': DB_PASSWORD,
+        'NAME': os.getenv('DB_NAME'),
+        'USER': os.getenv('DB_USER'),
+        'PASSWORD': os.getenv('DB_PASSWORD'),
     }
 }
 
@@ -138,9 +138,9 @@ STATICFILES_DIRS = [
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 AUTH_USER_MODEL = 'users.User'
-# LOGOUT_REDIRECT_URL = '/'
-# LOGIN_REDIRECT_URL = '/'
-# LOGIN_URL = '/users/'
+LOGOUT_REDIRECT_URL = '/'
+LOGIN_REDIRECT_URL = '/'
+LOGIN_URL = '/users/'
 
 # EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
@@ -151,44 +151,16 @@ EMAIL_HOST = 'smtp.mail.ru'
 EMAIL_PORT = 2525
 EMAIL_USE_TLS = True
 EMAIL_USE_SSL = False
-EMAIL_HOST_USER = os.getenv('EMAIL')
-EMAIL_HOST_PASSWORD = os.getenv('EMAIL_PASSWORD')
+EMAIL_HOST_USER = os.getenv('EMAIL_HOST_USER')
+EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD')
 
 
 CRONJOBS = [
-    ('* * * * *', 'service.cron.send_once_day'),
-    ('* * * * 0', 'service.cron.send_once_week'),
-    ('* * 1 * *', 'service.cron.send_once_month'),
+    ('* * * * *', 'service.cron.send_message'),
 ]
 
+SUPERUSER_EMAIL = os.getenv('SUPERUSER_EMAIL')
+SUPERUSER_PASSWORD = os.getenv('SUPERUSER_PASSWORD')
+SUPERUSER_FIRST_NAME = os.getenv('SUPERUSER_FIRST_NAME')
+SUPERUSER_LAST_NAME = os.getenv('SUPERUSER_LAST_NAME')
 
-# LOGGING = {
-#     'version': 1,
-#     'disable_existing_loggers': False,
-#     'formatters': {
-#         'console': {
-#             'format': '%(name)-12s %(levelname)-8s %(message)s'
-#         },
-#         'file': {
-#             'format': '%(asctime)s %(name)-12s %(levelname)-8s %(message)s'
-#         }
-#     },
-#     'handlers': {
-#         'console': {
-#             'class': 'logging.StreamHandler',
-#             'formatter': 'console'
-#         },
-#         'file': {
-#             'level': 'DEBUG',
-#             'class': 'logging.FileHandler',
-#             'formatter': 'file',
-#             'filename': 'debug.log'
-#         }
-#     },
-#     'loggers': {
-#         'main': {
-#             'level': 'DEBUG',
-#             'handlers': ['console', 'file']
-#         }
-#     }
-# }
