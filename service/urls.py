@@ -4,7 +4,7 @@ from service.views import (HomeTemplateView, CustomerListView, MailingListView, 
                            MailingCreateView, MessageDeleteView, CustomerCreateView, CustomerDetailView,
                            CustomerUpdateView, CustomerDeleteView, MessageCreateView, MessageUpdateView,
                            MailingDetailView, MailingUpdateView, MailingDeleteView, get_report, LogListView,
-                           mailing_off, mailing_on)
+                           mailing_toggle_activity)
 
 app_name = ServiceConfig.name
 
@@ -31,6 +31,5 @@ urlpatterns = [
 
     path('services/report/', get_report, name='report'),
     path('services/logs/<int:pk>/', LogListView.as_view(), name='logs'),
-    path('services/off/<int:pk>/', mailing_off, name='mailing_off'),
-    path('services/on/<int:pk>/', mailing_on, name='mailing_on'),
+    path('services/activity/<int:pk>/', mailing_toggle_activity, name='mailing_activity'),
 ]
