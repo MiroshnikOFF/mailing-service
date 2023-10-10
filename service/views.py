@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timedelta
 
 from django.contrib.auth.decorators import permission_required, login_required
 from django.contrib.auth.mixins import PermissionRequiredMixin, LoginRequiredMixin
@@ -9,7 +9,7 @@ from django.views.generic import TemplateView, ListView, DetailView, CreateView,
 from blog.models import Blog
 from service.forms import CustomerForm, MessageForm, MailingForm
 from service.models import Mailing, Customer, Message, Log
-from service.services import send
+from service.services import send, get_random_articles_from_cache
 
 
 class HomeTemplateView(TemplateView):
@@ -21,12 +21,12 @@ class HomeTemplateView(TemplateView):
         count_mailing_inactive = Mailing.objects.filter(status='Завершена').count()
         count_mailing_active = count_mailings_all - count_mailing_inactive
         count_unique_customers = Customer.objects.values('email').distinct().count()
-        random_articles = Blog.objects.order_by('?')[:3]
+        # random_articles = Blog.objects.order_by('?')[:3]
 
         context_data['mailings_all'] = count_mailings_all
         context_data['mailing_active'] = count_mailing_active
         context_data['unique_customers'] = count_unique_customers
-        context_data['blog'] = random_articles
+        context_data['blog'] = get_random_articles_from_cache()
 
         return context_data
 
@@ -145,7 +145,10 @@ class MailingCreateView(LoginRequiredMixin, PermissionRequiredMixin, CreateView)
         if mailing.start < datetime.now().time() < mailing.finish:
             mailing.status = send(mailing.pk)
         mailing.status = 'Создана'
-        mailing.next_run = datetime.now().date()
+        if mailing.start > datetime.now().time():
+            mailing.next_run = datetime.now().date() + timedelta(days=1)
+        else:
+            mailing.next_run = datetime.now().date()
         return super().form_valid(form)
 
 
