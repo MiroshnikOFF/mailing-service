@@ -15,8 +15,12 @@
         {% if perms.service.view_customer %}
             <a class="p-2 btn btn-outline-primary" href="{% url 'service:customers' %}">Клиенты</a>
         {% endif %}
-        <a class="p-2 btn btn-outline-primary" href="{% url 'service:mailings' %}">Рассылки</a>
-        <a class="p-2 btn btn-outline-primary" href="{% url 'service:messages' %}">Сообщения</a>
+        {% if perms.service.view_mailing %}
+            <a class="p-2 btn btn-outline-primary" href="{% url 'service:mailings' %}">Рассылки</a>
+        {% endif %}
+        {% if perms.service.view_message %}
+            <a class="p-2 btn btn-outline-primary" href="{% url 'service:messages' %}">Сообщения</a>
+        {% endif %}
         {% if perms.users.view_user %}
             <a class="p-2 btn btn-outline-primary" href="{% url 'users:users_list' %}">Пользователи</a>
         {% endif %}
