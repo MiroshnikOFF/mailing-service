@@ -1,0 +1,54 @@
+{% extends 'service/base.html' %}
+
+{% block content %}
+    <h2 align="center">{{ object.email }}</h2>
+    <table class="table">
+        <thead>
+        <tr>
+            <th scope="col"></th>
+            <th scope="col">ФИО</th>
+            <th scope="col">Телефон</th>
+            <th scope="col">Аватар</th>
+            <th scope="col">Почта верифицирована</th>
+            <th scope="col">Активность</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr>
+            <td>{{ object.pk }}</td>
+            <td>{{ object.first_name }} {{ object.last_name }}</td>
+            {% if object.phone %}
+                <td>{{ object.phone }}</td>
+            {% else %}
+                <td>Не указан</td>
+            {% endif %}
+            <td>{{ object.avatar }}</td>
+
+            {% if object.is_verified %}
+                <td>Да</td>
+            {% else %}
+                <td>Нет</td>
+            {% endif %}
+
+
+            {% if object.is_active %}
+                <td>Активен</td>
+            {% else %}
+                <td>Заблокирован</td>
+            {% endif %}
+            <td>
+                {% if perms.users.change_user %}
+                    <a class="btn btn-outline-warning"
+                       href="{% url 'users:user_update' object.pk %}">Редактировать</a>
+                {% endif %}
+
+                {% if perms.users.delete_user %}
+                    <a class="btn btn-outline-danger" href="{% url 'users:user_delete' object.pk %}">Удалить</a>
+                {% endif %}
+            </td>
+        </tr>
+        </tbody>
+    </table>
+{% endblock %}
+
+

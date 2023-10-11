@@ -2,10 +2,6 @@
 
 {% block content %}
     <h2 align="center">Пользователи</h2>
-    {#    <div class="col12 mb-5">#}
-    {#        <a class="p-2 btn btn-outline-success" href="{% url 'service:mailing_create' %}">Создать рассылку</a>#}
-    {#        <a class="p-2 btn btn-outline-primary" href="{% url 'service:report' %}">Отчет проведенных рассылок</a>#}
-    {#    </div>#}
     <table class="table">
         <thead>
         <tr>
@@ -21,7 +17,9 @@
         {% for object in object_list %}
             <tr>
                 <th scope="row">{{ object.pk }}</th>
-                <td>{{ object.email }}</td>
+                <td>
+                    <a href="{% url 'users:user' object.pk %}">{{ object.email }}</a>
+                </td>
                 <td>{{ object.first_name }}</td>
                 <td>{{ object.last_name }}</td>
                 {% if object.phone %}
