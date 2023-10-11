@@ -5,6 +5,8 @@ from service.models import NULLABLE
 
 
 class Blog(models.Model):
+    """Модель для работы с блогом"""
+
     title = models.CharField(max_length=150, verbose_name='Заголовок')
     body = models.TextField(**NULLABLE, verbose_name='Содержимое статьи')
     image = models.ImageField(upload_to='blog/', **NULLABLE, verbose_name='Изображение')

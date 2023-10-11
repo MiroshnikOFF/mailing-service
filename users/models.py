@@ -5,6 +5,8 @@ from service.models import NULLABLE
 
 
 class User(AbstractUser):
+    """Модель для работы с пользователями"""
+
     username = None
 
     email = models.EmailField(unique=True, verbose_name='Email')
@@ -25,7 +27,7 @@ class User(AbstractUser):
         verbose_name_plural = 'Пользователи'
         permissions = [
             (
-                'set_is_active_user',
+                'set_is_active_user',   # Разрешение на блокировку/активацию пользователя
                 'Can active user'
             )
         ]

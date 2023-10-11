@@ -6,6 +6,8 @@ NULLABLE = {'null': True, 'blank': True}
 
 
 class Customer(models.Model):
+    """Модель для работы с клиентами"""
+
     name = models.CharField(max_length=150, verbose_name='ФИО')
     email = models.EmailField(unique=True, verbose_name='Почта')
     comment = models.TextField(**NULLABLE, verbose_name='Комментарий')
@@ -21,6 +23,8 @@ class Customer(models.Model):
 
 
 class Message(models.Model):
+    """Модель для работы с сообщениями"""
+
     topic = models.CharField(max_length=200, verbose_name='Тема письма')
     body = models.TextField(**NULLABLE, verbose_name='Содержимое письма')
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, **NULLABLE,
@@ -35,6 +39,8 @@ class Message(models.Model):
 
 
 class Mailing(models.Model):
+    """Модель для работы с рассылками"""
+
     date_time = models.DateTimeField(auto_now=True, verbose_name='Дата и время создания')
     start = models.TimeField(default='00:00:00', verbose_name='Время начала рассылки')
     finish = models.TimeField(default='00:00:00', verbose_name='Время окончания рассылки')
@@ -58,12 +64,14 @@ class Mailing(models.Model):
         permissions = [
             (
                 'set_is_active_mailing',
-                'Can active mailing'
+                'Can active Рассылка'
             )
         ]
 
 
 class Log(models.Model):
+    """Модель для работы с логами рассылок"""
+
     date_time_last_attempt = models.DateTimeField(auto_now=True, verbose_name='Дата и время последней попытки')
     attempt_status = models.CharField(max_length=150, verbose_name='Статус попытки')
     mail_server_response = models.CharField(max_length=150, verbose_name='Ответ почтового сервера')

@@ -12,7 +12,12 @@ from service.models import Mailing, Log
 NOW_DATE = datetime.now().date()
 
 
-def change_next_run_mailing(mailing_pk):
+def change_next_run_mailing(mailing_pk: int) -> object:
+    """
+    Получает рассылку по pk и устанавливает в поле next_run следующую дату запуска исходя из
+    установленной периодичности рассылки. Возвращает следующую дату запуска рассылки.
+    """
+
     mailing = Mailing.objects.get(pk=mailing_pk)
     if mailing.day:
         mailing.next_run = NOW_DATE + timedelta(days=1)
@@ -24,7 +29,13 @@ def change_next_run_mailing(mailing_pk):
     return mailing.next_run
 
 
-def send(pk):
+def send_mailing(pk: int) -> str:
+    """
+    Получает рассылку по pk, формирует список клиентов для рассылки, запускает рассылку.
+    В процессе выполнения меняет статус рассылки, сохраняет логи в БД и устанавливает дату следующего запуска.
+    Возвращает статус рассылки.
+    """
+
     mailing = Mailing.objects.get(pk=pk)
     customers = mailing.customers.all()
     recipient_list = [customer.email for customer in customers]
@@ -39,17 +50,18 @@ def send(pk):
     else:
         log_status = 'Не успешно'
         server_response = 'Не отправлено'
-    mailing.save()
-
-    mailing.next_run = change_next_run_mailing(mailing.pk)
-
     Log.objects.create(date_time_last_attempt=datetime.now(), attempt_status=log_status,
                        mail_server_response=server_response,
                        mailing=mailing)
+
+    mailing.save()
+    mailing.next_run = change_next_run_mailing(mailing.pk)
     return mailing.status
 
 
-def get_random_articles_from_cache():
+def get_random_articles_from_cache() -> list[object]:
+    """Создает и возвращает queryset из трех случайных статей блога. Кеширует его."""
+
     queryset = Blog.objects.order_by('?')[:3]
     if settings.CACHE_ENABLED:
         key = 'random_articles'

@@ -4,6 +4,7 @@ from service.models import Customer, Message, Mailing
 
 
 class StyleFormMixin:
+    """Миксин для формирования стиля форм."""
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -12,6 +13,7 @@ class StyleFormMixin:
 
 
 class CustomerForm(StyleFormMixin, forms.ModelForm):
+    """Форма для работы с клиентами"""
 
     class Meta:
         model = Customer
@@ -19,6 +21,7 @@ class CustomerForm(StyleFormMixin, forms.ModelForm):
 
 
 class MessageForm(StyleFormMixin, forms.ModelForm):
+    """Форма для работы с сообщениями"""
 
     class Meta:
         model = Message
@@ -26,12 +29,18 @@ class MessageForm(StyleFormMixin, forms.ModelForm):
 
 
 class MailingForm(StyleFormMixin, forms.ModelForm):
+    """Форма для работы с рассылками"""
 
     class Meta:
         model = Mailing
         exclude = ('status', 'is_active', 'next_run', 'user',)
 
     def __init__(self, user, *args, **kwargs):
+        """
+        Переопределяет поля customers и message таким образом, чтобы в них отображались только клиенты и сообщения
+        текущего пользователя.
+        """
+
         super().__init__(*args, **kwargs)
         self.fields['customers'].queryset = Customer.objects.filter(user=user)
         self.fields['message'].queryset = Message.objects.filter(user=user)
