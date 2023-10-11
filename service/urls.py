@@ -11,15 +11,15 @@ from service.views import (HomeTemplateView, CustomerListView, MailingListView, 
 app_name = ServiceConfig.name
 
 urlpatterns = [
-    path('', cache_page(60)(HomeTemplateView.as_view()), name='home'),
+    path('', HomeTemplateView.as_view(), name='home'),
 
-    path('customers/', CustomerListView.as_view(), name='customers'),
+    path('customers/', cache_page(60)(CustomerListView.as_view()), name='customers'),
     path('customers/create/', CustomerCreateView.as_view(), name='customer_create'),
     path('customers/<int:pk>/', CustomerDetailView.as_view(), name='customer'),
     path('customers/update/<int:pk>/', CustomerUpdateView.as_view(), name='customer_update'),
     path('customers/delete/<int:pk>/', CustomerDeleteView.as_view(), name='customer_delete'),
 
-    path('messages/', MessageListView.as_view(), name='messages'),
+    path('messages/', cache_page(60)(MessageListView.as_view()), name='messages'),
     path('messages/create/', MessageCreateView.as_view(), name='message_create'),
     path('messages/<int:pk>/', MessageDetailView.as_view(), name='message'),
     path('messages/update/<int:pk>/', MessageUpdateView.as_view(), name='message_update'),
