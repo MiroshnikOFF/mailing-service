@@ -112,4 +112,3 @@ def get_random_articles_from_cache() -> list[object]:
             cache.set(key, cache_data)
         return cache_data
     return queryset
-
