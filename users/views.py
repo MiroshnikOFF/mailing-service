@@ -33,6 +33,7 @@ class RegisterView(CreateView):
         user = form.save()
         key = ''.join([str(random.randint(0, 9)) for _ in range(12)])
         user.key = key
+        user.save()
         send_mail(
             subject='Подтверждение электронной почты',
             message=f'Код для подтверждения: {key}',

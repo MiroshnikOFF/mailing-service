@@ -9,26 +9,54 @@
         </div>
         <div class="row mt-5">
             <div class="col-4">
-                <p>Количество рассылок всего: {{ mailings_all }}</p>
+                <div class="card">
+                    <div class="card-header">
+                        <h3>Количество рассылок</h3>
+                    </div>
+                    <div class="card-body">
+                        <h1>{{ mailings_all }}</h1>
+                    </div>
+                </div>
             </div>
             <div class="col-4">
-                <p>Количество активных рассылок: {{ mailing_active }}</p>
+                <div class="card">
+                    <div class="card-header">
+                        <h3>Количество активных рассылок</h3>
+                    </div>
+                    <div class="card-body">
+                        <h1>{{ mailing_active }}</h1>
+                    </div>
+                </div>
             </div>
-            <div class="coi-4">
-                <p>Количество уникальных клиентов для рассылок: {{ unique_customers }}</p>
+            <div class="col-4">
+                <div class="card">
+                    <div class="card-header">
+                        <h3>Количество уникальных клиентов для рассылок</h3>
+                    </div>
+                    <div class="card-body">
+                        <h1>{{ unique_customers }}</h1>
+                    </div>
+                </div>
             </div>
         </div>
         <div class="row mt-5">
             {% for article in blog %}
                 <div class="col-4">
-                    <p>{{ article.title }}</p>
-                    <p>{{ article.body }}</p>
-                    <p>{{ article.image }}</p>
-                    <p>Количество просмотров: {{ article.views }}</p>
-                    <p>Опубликован {{ article.published_on }}</p>
+                    <div class="card">
+                        <div class="card-header">
+                            <h3>{{ article.title }}</h3>
+                        </div>
+                        <div class="card-body">
+                            <p>{{ article.body }}</p>
+                        </div>
+                        <img src="media/{{ article.image }}" alt="Упс!">
+                        <div class="card-footer">
+                            <p>Количество просмотров: {{ article.views }}</p>
+                            <p>Опубликован {{ article.published_on }}</p>
+                        </div>
+                    </div>
                 </div>
             {% endfor %}
-
         </div>
     </div>
 {% endblock %}

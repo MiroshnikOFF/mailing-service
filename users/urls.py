@@ -17,6 +17,6 @@ urlpatterns = [
     path('delete/<int:pk>/', UserDeleteView.as_view(), name='user_delete'),
     path('verification/', email_verification, name='verification'),
     path('recovery/', password_recovery, name='recovery'),
-    path('users/', cache_page(60)(UserListView.as_view()), name='users_list'),
+    path('users/', UserListView.as_view(), name='users_list'),
     path('user/activity/<int:pk>/', user_toggle_activity, name='user_activity'),
 ]

@@ -61,6 +61,7 @@ class Mailing(models.Model):
     class Meta:
         verbose_name = 'Рассылка'
         verbose_name_plural = 'Рассылки'
+        ordering = ('pk',)
         permissions = [
             (
                 'set_is_active_mailing',
