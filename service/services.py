@@ -6,8 +6,7 @@ from django.core.mail import send_mail
 from blog.models import Blog
 from config import settings
 from config.settings import EMAIL_HOST_USER
-from service.models import Mailing, Log
-
+from service.models import Mailing, Log, Customer
 
 NOW_DATE = datetime.now().date()
 
@@ -59,6 +58,48 @@ def send_mailing(pk: int) -> str:
     return mailing.status
 
 
+def get_count_mailings_all() -> int:
+    """Считает количество всех рассылок, кеширует и возвращает результат"""
+
+    count_mailings_all = Mailing.objects.count()
+    if settings.CACHE_ENABLED:
+        key = 'mailings_all'
+        cache_data = cache.get(key)
+        if cache_data is None:
+            cache_data = count_mailings_all
+            cache.set('mailings_all', cache_data)
+        return cache_data
+    return count_mailings_all
+
+
+def get_count_mailing_active() -> int:
+    """Считает количество активных рассылок, кеширует и возвращает результат"""
+
+    count_mailing_active = get_count_mailings_all() - Mailing.objects.filter(status='Завершена').count()
+    if settings.CACHE_ENABLED:
+        key = 'mailing_active'
+        cache_data = cache.get(key)
+        if cache_data is None:
+            cache_data = count_mailing_active
+            cache.set('mailing_active', cache_data)
+        return cache_data
+    return count_mailing_active
+
+
+def get_count_unique_customers() -> int:
+    """Считает количество всех уникальных клиентов, кеширует и возвращает результат"""
+
+    count_unique_customers = Customer.objects.values('email').distinct().count()
+    if settings.CACHE_ENABLED:
+        key = 'unique_customers'
+        cache_data = cache.get(key)
+        if cache_data is None:
+            cache_data = count_unique_customers
+            cache.set('unique_customers', cache_data)
+        return cache_data
+    return count_unique_customers
+
+
 def get_random_articles_from_cache() -> list[object]:
     """Создает и возвращает queryset из трех случайных статей блога. Кеширует его."""
 
@@ -71,4 +112,3 @@ def get_random_articles_from_cache() -> list[object]:
             cache.set(key, cache_data)
         return cache_data
     return queryset
-
