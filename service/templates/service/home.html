@@ -21,7 +21,11 @@
         <div class="row mt-5">
             {% for article in blog %}
                 <div class="col-4">
-                    <p>{{ article }}</p>
+                    <p>{{ article.title }}</p>
+                    <p>{{ article.body }}</p>
+                    <p>{{ article.image }}</p>
+                    <p>Количество просмотров: {{ article.views }}</p>
+                    <p>Опубликован {{ article.published_on }}</p>
                 </div>
             {% endfor %}
 
