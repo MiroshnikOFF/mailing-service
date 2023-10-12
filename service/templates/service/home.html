@@ -1,13 +1,31 @@
 {% extends 'service/base.html' %}
 
 {% block content %}
-    <h2 align="center">Главная страница</h2>
-    <h3>Количество рассылок всего: {{ mailings_all }}</h3>
-    <h3>Количество активных рассылок: {{ mailing_active }}</h3>
-    <h3>Количество уникальных клиентов для рассылок: {{ unique_customers }}</h3>
-    {% for article in blog %}
-        <p>{{ article }}</p>
-    {% endfor %}
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-12 text-center">
+                <h1>Главная страница</h1>
+            </div>
+        </div>
+        <div class="row mt-5">
+            <div class="col-4">
+                <p>Количество рассылок всего: {{ mailings_all }}</p>
+            </div>
+            <div class="col-4">
+                <p>Количество активных рассылок: {{ mailing_active }}</p>
+            </div>
+            <div class="coi-4">
+                <p>Количество уникальных клиентов для рассылок: {{ unique_customers }}</p>
+            </div>
+        </div>
+        <div class="row mt-5">
+            {% for article in blog %}
+                <div class="col-4">
+                    <p>{{ article }}</p>
+                </div>
+            {% endfor %}
 
+        </div>
+    </div>
 {% endblock %}
 
