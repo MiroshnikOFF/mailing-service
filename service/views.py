@@ -2,15 +2,14 @@ from datetime import datetime, timedelta
 
 from django.contrib.auth.decorators import permission_required, login_required
 from django.contrib.auth.mixins import PermissionRequiredMixin, LoginRequiredMixin
-from django.core.cache import cache
 from django.shortcuts import render, redirect
 from django.urls import reverse_lazy, reverse
 from django.views.generic import TemplateView, ListView, DetailView, CreateView, DeleteView, UpdateView
 
-from config import settings
 from service.forms import CustomerForm, MessageForm, MailingForm
 from service.models import Mailing, Customer, Message, Log
-from service.services import send_mailing, get_random_articles_from_cache
+from service.services import send_mailing, get_random_articles_from_cache, get_count_mailings_all, \
+    get_count_mailing_active, get_count_unique_customers
 
 
 class HomeTemplateView(TemplateView):
@@ -20,39 +19,17 @@ class HomeTemplateView(TemplateView):
 
     def get_context_data(self, **kwargs) -> dict:
         """
-        Собирает в context_data данные о количестве всех рассылок, активных рассылок, всех уникальных клиентов
-        и выбирает 3 случайные статьи из блога. Кеширует данные, возвращает context_data.
+        Собирает в context_data кешированные данные о количестве всех рассылок, активных рассылок, всех уникальных
+        клиентов и выбирает 3 случайные статьи из блога, используя сервисные функции, возвращает context_data.
         """
 
         context_data = super().get_context_data(**kwargs)
 
-        count_mailings_all = Mailing.objects.count()
-        count_mailing_active = count_mailings_all - Mailing.objects.filter(status='Завершена').count()
-        count_unique_customers = Customer.objects.values('email').distinct().count()
+        context_data['mailings_all'] = get_count_mailings_all()
+        context_data['mailing_active'] = get_count_mailing_active()
+        context_data['unique_customers'] = get_count_unique_customers()
         context_data['blog'] = get_random_articles_from_cache()
 
-        # Кеширование данных
-        if settings.CACHE_ENABLED:
-            mailings_all = cache.get('mailings_all')
-            if mailings_all is None:
-                mailings_all = count_mailings_all
-                cache.set('mailings_all', mailings_all)
-            mailing_active = cache.get('mailing_active')
-            if mailing_active is None:
-                mailing_active = count_mailing_active
-                cache.set('mailing_active', mailing_active)
-            unique_customers = cache.get('unique_customers')
-            if unique_customers is None:
-                unique_customers = count_unique_customers
-                cache.set('unique_customers', unique_customers)
-            context_data['mailings_all'] = mailings_all
-            context_data['mailing_active'] = mailing_active
-            context_data['unique_customers'] = unique_customers
-            return context_data
-
-        context_data['mailings_all'] = count_mailings_all
-        context_data['mailing_active'] = count_mailing_active
-        context_data['unique_customers'] = count_unique_customers
         return context_data
 
 
