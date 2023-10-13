@@ -40,7 +40,7 @@ class RegisterView(CreateView):
             from_email=settings.EMAIL_HOST_USER,
             recipient_list=[user.email],
         )
-        group = Group.objects.get(name='user')
+        group = Group.objects.get(name='users')
         group.user_set.add(user)
         return super().form_valid(form)
 
