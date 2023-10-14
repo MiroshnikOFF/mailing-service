@@ -29,7 +29,7 @@ class User(AbstractUser):
         permissions = [
             (
                 'set_is_active_user',   # Разрешение на блокировку/активацию пользователя
-                'Can active user'
+                'Can active Пользователь'
             )
         ]
 
