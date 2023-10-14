@@ -168,9 +168,12 @@ class UserListView(LoginRequiredMixin, UserPassesTestMixin, ListView):
     model = User
 
     def test_func(self):
-        """Задает доступ к списку пользователей только для персонала"""
+        """Задает доступ к списку пользователей только для суперпользователя или менеджера"""
 
-        return self.request.user.is_staff
+        user = self.request.user
+        is_superuser = user.is_superuser
+        groups = user.groups.filter(name__in=['managers']).exists()
+        return is_superuser or groups
 
 
 @login_required
@@ -184,4 +187,4 @@ def user_toggle_activity(request, pk):
     else:
         user.is_active = True
     user.save()
-    return redirect(reverse_lazy('users:users_list'))
+    return redirect('users:users_list')

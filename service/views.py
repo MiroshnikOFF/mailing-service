@@ -289,7 +289,7 @@ def mailing_toggle_activity(request, pk):
         mailing.is_active = True
         mailing.status = 'Создана'
     mailing.save()
-    return redirect(reverse_lazy('service:mailings'))
+    return redirect('service:mailings')
 
 
 class LogListView(LoginRequiredMixin, PermissionRequiredMixin, ListView):
