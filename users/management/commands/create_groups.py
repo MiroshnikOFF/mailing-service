@@ -13,6 +13,7 @@ class Command(BaseCommand):
             Permission.objects.get(name='Can view Пользователь'),
             Permission.objects.get(name='Can active Пользователь'),
             Permission.objects.get(name='Can active Рассылка'),
+            Permission.objects.get(name='Can view Лог'),
         ]
         group_users, users_created = Group.objects.get_or_create(name='users')
         group_managers, managers_created = Group.objects.get_or_create(name='managers')
@@ -20,12 +21,14 @@ class Command(BaseCommand):
         if users_created:
             for perm in user_permissions:
                 group_users.permissions.add(perm)
+            group_users.permissions.add(Permission.objects.get(name='Can view Лог'))
             print(f'Создана группа {group_users}')
         else:
             print(f'Группа {group_users} уже существует')
         if managers_created:
             for perm in manager_permissions:
                 group_managers.permissions.add(perm)
+            group_managers.user_set.update(is_staff=True)  # Все менеджеры становятся персоналом
             print(f'Создана группа {group_managers}')
         else:
             print(f'Группа {group_managers} уже существует')
