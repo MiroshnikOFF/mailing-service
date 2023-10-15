@@ -4,47 +4,76 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Mailing service</title>
+    <link rel="shrtcut icon" type="image/x-icon" href="{% static 'service/img/favicon.png' %}">
+    <title>Сервис рассылки сообщений</title>
     <link rel="stylesheet" type="text/css" href="{% static 'service/css/bootstrap.min.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'service/css/fontello.css' %}">
 </head>
 <body>
-<div class="d-flex flex-column flex-md-row align-items-center p-3 px-md-4 mb-3 bg-white border-bottom box-shadow">
-    <h1 class="my-0 mr-md-auto font-weight-normal">Сервис рассылки сообщений</h1>
-    <nav class="ms-5">
-        <a class="p-2 btn btn-outline-primary" href="{% url 'service:home' %}">Главная</a>
-        {% if perms.service.view_customer %}
-            <a class="p-2 btn btn-outline-primary" href="{% url 'service:customers' %}">Клиенты</a>
-        {% endif %}
-        {% if perms.service.view_mailing %}
-            <a class="p-2 btn btn-outline-primary" href="{% url 'service:mailings' %}">Рассылки</a>
-        {% endif %}
-        {% if perms.service.view_message %}
-            <a class="p-2 btn btn-outline-primary" href="{% url 'service:messages' %}">Сообщения</a>
-        {% endif %}
-        {% if perms.users.view_user %}
-            <a class="p-2 btn btn-outline-primary" href="{% url 'users:users_list' %}">Пользователи</a>
-        {% endif %}
-    </nav>
-</div>
-<div class="col-sm-4 offset-md-1 py-4">
-    <ul class="list-unstyled">
+<header>
+    <div class="row bg-primary">
+        <div class="col-12">
+            <h1 class="text-center text-white">Сервис рассылки сообщений</h1>
+        </div>
+    </div>
+</header>
+<div class="row">
+    <div class="col-10">
+        <div class="p-3 px-4 md-5">
+            <nav class="ms-5">
+                <a class="p-2 btn btn-outline-primary" href="{% url 'service:home' %}">Главная</a>
+                {% if perms.service.view_customer %}
+                    <a class="p-2 btn btn-outline-primary" href="{% url 'service:customers' %}">Клиенты</a>
+                {% endif %}
+                {% if perms.service.view_mailing %}
+                    <a class="p-2 btn btn-outline-primary" href="{% url 'service:mailings' %}">Рассылки</a>
+                {% endif %}
+                {% if perms.service.view_message %}
+                    <a class="p-2 btn btn-outline-primary" href="{% url 'service:messages' %}">Сообщения</a>
+                {% endif %}
+                {% if perms.users.view_user %}
+                    <a class="p-2 btn btn-outline-primary" href="{% url 'users:users_list' %}">Пользователи</a>
+                {% endif %}
+            </nav>
+        </div>
+    </div>
+    <div class="col-2 px-md-5">
         {% if user.is_authenticated %}
-            <li><a href="{% url 'users:profile' %}">Профиль</a></li>
-            <li><a href="{% url 'users:logout' %}">Выход</a></li>
-            {% if not user.is_verified %}
-                <a class="p-2 btn btn-outline-warning" href="{% url 'users:verification' %}">Подтвердите электронную
-                    почту</a>
-            {% endif %}
+            <div class="dropdown mt-4">
+                <button class="btn btn-primary dropdown-toggle" type="button" data-bs-toggle="dropdown"
+                        aria-expanded="false">
+                    {{ user }}
+                </button>
+                <ul class="dropdown-menu">
+                    <li><a class="dropdown-item text-white bg-primary" href="{% url 'users:profile' %}">Профиль</a></li>
+                    <li><a class="dropdown-item text-primary" href="{% url 'users:logout' %}">Выход</a></li>
+                    {% if not user.is_verified %}
+                        <li><a class="dropdown-item text-white bg-danger" href="{% url 'users:verification' %}">Подтвердите
+                            электронную
+                            почту</a></li>
+                    {% endif %}
+                </ul>
+            </div>
         {% else %}
-            <li><a href="{% url 'users:login' %}">Вход</a></li>
-            <li><a href="{% url 'users:register' %}">Регистрация</a></li>
+            <div class="dropdown mt-4">
+                <button class="btn btn-primary dropdown-toggle" type="button" data-bs-toggle="dropdown"
+                        aria-expanded="false">
+                    Вход / Регистрация
+                </button>
+                <ul class="dropdown-menu">
+                    <li><a class="dropdown-item text-primary" href="{% url 'users:login' %}">Вход</a></li>
+                    <li><a class="dropdown-item text-primary" href="{% url 'users:register' %}">Регистрация</a></li>
+                </ul>
+            </div>
         {% endif %}
-
-    </ul>
+    </div>
 </div>
+
+
 
 {% block content %}
 {% endblock %}
 
+<script src="{% static 'service/js/bootstrap.bundle.min.js' %}"></script>
 </body>
 </html>
