@@ -20,3 +20,4 @@ class Command(BaseCommand):
 
         user.set_password(settings.SUPERUSER_PASSWORD)
         user.save()
+        print(f'Администратор {user.first_name} {user.last_name} создан.')

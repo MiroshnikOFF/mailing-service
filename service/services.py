@@ -40,6 +40,7 @@ def send_mailing(pk: int) -> str:
     recipient_list = [customer.email for customer in customers]
 
     mailing.status = 'Запущена'
+    mailing.save()
 
     letter = send_mail(mailing.message.topic, mailing.message.body, EMAIL_HOST_USER, recipient_list)
     if letter:
@@ -81,7 +82,7 @@ def get_count_mailing_active() -> int:
         cache_data = cache.get(key)
         if cache_data is None:
             cache_data = count_mailing_active
-            cache.set('mailing_active', cache_data)
+            cache.set(key, cache_data)
         return cache_data
     return count_mailing_active
 
@@ -95,7 +96,7 @@ def get_count_unique_customers() -> int:
         cache_data = cache.get(key)
         if cache_data is None:
             cache_data = count_unique_customers
-            cache.set('unique_customers', cache_data)
+            cache.set(key, cache_data)
         return cache_data
     return count_unique_customers
 

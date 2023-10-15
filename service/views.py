@@ -277,7 +277,7 @@ def get_report(request):
 
 
 @login_required
-@permission_required('service.set_is_activ_mailing')
+@permission_required('service.set_is_active_mailing')
 def mailing_toggle_activity(request, pk):
     """Включает/отключает рассылку"""
 
@@ -289,7 +289,7 @@ def mailing_toggle_activity(request, pk):
         mailing.is_active = True
         mailing.status = 'Создана'
     mailing.save()
-    return redirect(reverse_lazy('service:mailings'))
+    return redirect('service:mailings')
 
 
 class LogListView(LoginRequiredMixin, PermissionRequiredMixin, ListView):
