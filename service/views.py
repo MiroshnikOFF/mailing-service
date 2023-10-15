@@ -277,7 +277,7 @@ def get_report(request):
 
 
 @login_required
-@permission_required('service.set_is_activ_mailing')
+@permission_required('service.set_is_active_mailing')
 def mailing_toggle_activity(request, pk):
     """Включает/отключает рассылку"""
 
