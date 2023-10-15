@@ -40,6 +40,7 @@ def send_mailing(pk: int) -> str:
     recipient_list = [customer.email for customer in customers]
 
     mailing.status = 'Запущена'
+    mailing.save()
 
     letter = send_mail(mailing.message.topic, mailing.message.body, EMAIL_HOST_USER, recipient_list)
     if letter:
