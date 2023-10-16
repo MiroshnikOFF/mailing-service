@@ -41,7 +41,7 @@ class Message(models.Model):
 class Mailing(models.Model):
     """Модель для работы с рассылками"""
 
-    date_time = models.DateTimeField(auto_now=True, verbose_name='Дата и время создания')
+    date_time = models.DateTimeField(auto_now_add=True, verbose_name='Дата и время создания')
     start = models.TimeField(default='00:00:00', verbose_name='Время начала рассылки')
     finish = models.TimeField(default='00:00:00', verbose_name='Время окончания рассылки')
     day = models.BooleanField(default=False, verbose_name='Раз в день')
