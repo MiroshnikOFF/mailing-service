@@ -73,6 +73,14 @@ class UserDitailView(LoginRequiredMixin, DetailView):
 
     model = User
 
+    def get_context_data(self, **kwargs):
+        """Сохраняет в context_data текущего авторизованного пользователя"""
+
+        context_data = super().get_context_data( **kwargs)
+        context_data['user'] = self.request.user
+        print(context_data)
+        return context_data
+
 
 class UserProfile(LoginRequiredMixin, UpdateView):
     """Контроллер для редактирования своего профиля текущим пользователем"""
