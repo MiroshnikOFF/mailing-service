@@ -17,7 +17,7 @@ class CustomerForm(StyleFormMixin, forms.ModelForm):
 
     class Meta:
         model = Customer
-        exclude = ('user',)
+        exclude = ('user', 'slug', )
 
 
 class MessageForm(StyleFormMixin, forms.ModelForm):
@@ -25,7 +25,7 @@ class MessageForm(StyleFormMixin, forms.ModelForm):
 
     class Meta:
         model = Message
-        exclude = ('user',)
+        exclude = ('user', 'slug', )
 
 
 class MailingForm(StyleFormMixin, forms.ModelForm):
@@ -33,7 +33,7 @@ class MailingForm(StyleFormMixin, forms.ModelForm):
 
     class Meta:
         model = Mailing
-        exclude = ('status', 'is_active', 'next_run', 'user',)
+        exclude = ('status', 'is_active', 'next_run', 'user', 'slug', )
 
     def __init__(self, user, *args, **kwargs):
         """

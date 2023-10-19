@@ -1,3 +1,5 @@
+from slugify import slugify
+
 from django.contrib.auth.models import AbstractUser
 from django.db import models
 
@@ -15,6 +17,7 @@ class User(AbstractUser):
     avatar = models.ImageField(upload_to='users/', verbose_name='Аватар', **NULLABLE)
     key = models.CharField(max_length=12, verbose_name='Ключ для верификации почты', **NULLABLE)
     is_verified = models.BooleanField(default=False, verbose_name='Почта верифицирована')
+    slug = models.SlugField(unique=True, verbose_name='slug')
 
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = []
@@ -33,5 +36,14 @@ class User(AbstractUser):
             )
         ]
 
+    def save(self, *args, **kwargs):
+        """Создает уникальный slug для пользователя"""
 
+        self.slug = slugify(self.email)
+        base_slug = self.slug
+        num = 1
+        while User.objects.filter(slug=self.slug).exclude(pk=self.pk).exists():
+            self.slug = f'{base_slug}-{num}'
+            num += 1
+        super().save(*args, **kwargs)
 
