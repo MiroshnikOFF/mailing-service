@@ -10,11 +10,11 @@
                     <a class="btn btn-primary btn-lg" type="button" href="{% url 'service:messages' %}">Закрыть</a>
                     {% if perms.service.change_message %}
                         <a class="btn btn-warning btn-lg" type="button"
-                           href="{% url 'service:message_update' object.pk %}">Редактировать</a>
+                           href="{% url 'service:message_update' object.slug %}">Редактировать</a>
                     {% endif %}
                     {% if perms.service.delete_message %}
                         <a class="btn btn-danger btn-lg" type="button"
-                           href="{% url 'service:message_delete' object.pk %}">Удалить</a>
+                           href="{% url 'service:message_delete' object.slug %}">Удалить</a>
                     {% endif %}
                 </div>
             </div>

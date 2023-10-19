@@ -20,7 +20,7 @@
                     <th scope="row">{{ object.pk }}</th>
                     <td>
                         {% if object.mailing %}
-                            <a href="{% url 'service:mailing' object.mailing.pk %}">{{ object.mailing }}</a>
+                            <a href="{% url 'service:mailing' object.mailing.slug %}">{{ object.mailing }}</a>
                         {% else %}
                             Удалена
                         {% endif %}

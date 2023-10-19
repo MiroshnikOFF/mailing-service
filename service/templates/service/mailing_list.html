@@ -22,7 +22,7 @@
             <tr>
                 <th scope="row">{{ object.pk }}</th>
                 <td>
-                    <a href="{% url 'service:mailing' object.pk %}">{{ object }}</a>
+                    <a href="{% url 'service:mailing' object.slug %}">{{ object }}</a>
                 </td>
                 <td>{{ object.date_time }}</td>
                 <td>{{ object.status }}</td>
@@ -30,10 +30,10 @@
                     <td>
                         {% if object.is_active %}
                             <a class="btn btn-outline-danger"
-                               href="{% url 'service:mailing_activity' object.pk %}">Отключить</a>
+                               href="{% url 'service:mailing_activity' object.slug %}">Отключить</a>
                         {% else %}
                             <a class="btn btn-outline-success"
-                               href="{% url 'service:mailing_activity' object.pk %}">Включить</a>
+                               href="{% url 'service:mailing_activity' object.slug %}">Включить</a>
                         {% endif %}
                     </td>
                 {% endif %}
