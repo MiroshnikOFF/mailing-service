@@ -309,6 +309,6 @@ class LogListView(LoginRequiredMixin, PermissionRequiredMixin, ListView):
         """Добавляет в context_data объект текущей рассылки"""
 
         context_data = super().get_context_data(*args, **kwargs)
-        mailing = Mailing.objects.get(pk=self.kwargs.get('pk'))
+        mailing = Mailing.objects.get(slug=self.kwargs.get('slug'))
         context_data['mailing'] = mailing
         return context_data

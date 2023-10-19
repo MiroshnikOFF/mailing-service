@@ -21,7 +21,7 @@
                 <th scope="row">{{ object.pk }}</th>
                 <td>{{ object.topic }}</td>
                 <td>
-                    <a href="{% url 'service:message' object.pk %}">Смотреть</a>
+                    <a href="{% url 'service:message' object.slug %}">Смотреть</a>
                 </td>
             </tr>
         {% endfor %}

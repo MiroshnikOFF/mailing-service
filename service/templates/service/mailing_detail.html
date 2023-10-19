@@ -37,7 +37,7 @@
             {% endif %}
             <td>{{ object.next_run }}</td>
             <td>
-                <a href="{% url 'service:message' object.message.pk %}">Смотреть</a>
+                <a href="{% url 'service:message' object.message.slug %}">Смотреть</a>
             </td>
             <td>
                 {% for object in customers %}
@@ -45,15 +45,15 @@
                 {% endfor %}
             </td>
             <td>
-                <a href="{% url 'service:logs' object.pk %}">Смотреть</a>
+                <a href="{% url 'service:logs' object.slug %}">Смотреть</a>
             </td>
             <td>
                 {% if perms.service.change_mailing %}
                     <a class="btn btn-outline-warning"
-                       href="{% url 'service:mailing_update' object.pk %}">Редактировать</a>
+                       href="{% url 'service:mailing_update' object.slug %}">Редактировать</a>
                 {% endif %}
                 {% if perms.service.delete_mailing %}
-                    <a class="btn btn-outline-danger" href="{% url 'service:mailing_delete' object.pk %}">Удалить</a>
+                    <a class="btn btn-outline-danger" href="{% url 'service:mailing_delete' object.slug %}">Удалить</a>
                 {% endif %}
             </td>
         </tr>

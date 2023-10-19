@@ -20,7 +20,7 @@
         <td>{{ object.name }}</td>
         <td>{{ object.email }}</td>
         <td>
-            <a href="{% url 'service:customer' object.pk %}">Смотреть</a>
+            <a href="{% url 'service:customer' object.slug %}">Смотреть</a>
         </td>
     </tr>
     {% endfor %}

@@ -13,10 +13,10 @@ urlpatterns = [
     path('register/', RegisterView.as_view(), name='register'),
     path('user/<int:pk>/', UserDitailView.as_view(), name='user'),
     path('profile/', UserProfile.as_view(), name='profile'),
-    path('update/<int:pk>', UserUpdateView.as_view(), name='user_update'),
-    path('delete/<int:pk>/', UserDeleteView.as_view(), name='user_delete'),
+    path('user/<int:pk>/update/', UserUpdateView.as_view(), name='user_update'),
+    path('user/<int:pk>/delete/', UserDeleteView.as_view(), name='user_delete'),
     path('verification/', email_verification, name='verification'),
     path('recovery/', password_recovery, name='recovery'),
-    path('users/', UserListView.as_view(), name='users_list'),
+    path('list/', UserListView.as_view(), name='users_list'),
     path('user/activity/<int:pk>/', user_toggle_activity, name='user_activity'),
 ]
