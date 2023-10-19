@@ -10,15 +10,15 @@ class CustomerAdmin(admin.ModelAdmin):
 
 @admin.register(Message)
 class MessageAdmin(admin.ModelAdmin):
-    list_display = ('topic', 'body',)
+    list_display = ('pk', 'topic', 'body',)
 
 
 @admin.register(Log)
 class LogAdmin(admin.ModelAdmin):
-    list_display = ('date_time_last_attempt', 'attempt_status', 'mail_server_response', 'mailing',)
+    list_display = ('pk', 'date_time_last_attempt', 'attempt_status', 'mail_server_response', 'mailing',)
 
 
 @admin.register(Mailing)
 class ServiceAdmin(admin.ModelAdmin):
-    list_display = ('message',)
+    list_display = ('pk', 'message',)
     filter_vertical = ('customers',)
