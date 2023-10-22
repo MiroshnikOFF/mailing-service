@@ -14,7 +14,7 @@ class Customer(models.Model):
     email = models.EmailField(unique=True, verbose_name='Почта')
     comment = models.TextField(**NULLABLE, verbose_name='Комментарий')
     slug = models.SlugField(unique=True, verbose_name='slug')
-    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, **NULLABLE,
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, **NULLABLE, related_name='customer',
                              verbose_name='Пользователь')
 
     def __str__(self):
@@ -42,7 +42,7 @@ class Message(models.Model):
     topic = models.CharField(max_length=200, verbose_name='Тема письма')
     body = models.TextField(**NULLABLE, verbose_name='Содержимое письма')
     slug = models.SlugField(unique=True, verbose_name='slug')
-    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, **NULLABLE,
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, **NULLABLE, related_name='message',
                              verbose_name='Пользователь')
 
     def __str__(self):
@@ -74,12 +74,13 @@ class Mailing(models.Model):
     week = models.BooleanField(default=False, verbose_name='Раз в неделю')
     month = models.BooleanField(default=False, verbose_name='Раз в месяц')
     status = models.CharField(**NULLABLE, max_length=150, verbose_name='Статус рассылки')
-    customers = models.ManyToManyField(Customer, verbose_name='Клиенты')
-    message = models.ForeignKey(Message, on_delete=models.CASCADE, **NULLABLE, verbose_name='Сообщение')
+    customers = models.ManyToManyField(Customer, related_name='mailing', verbose_name='Клиенты')
+    message = models.ForeignKey(Message, on_delete=models.CASCADE, related_name='mailing', **NULLABLE,
+                                verbose_name='Сообщение')
     is_active = models.BooleanField(default=True, verbose_name='Активная')
     next_run = models.DateField(**NULLABLE, verbose_name='Дата следующей рассылки')
     slug = models.SlugField(unique=True, verbose_name='slug')
-    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, **NULLABLE,
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, **NULLABLE, related_name='mailing',
                              verbose_name='Пользователь')
 
     def __str__(self):
@@ -115,7 +116,8 @@ class Log(models.Model):
     attempt_status = models.CharField(max_length=150, verbose_name='Статус попытки')
     mail_server_response = models.CharField(max_length=150, verbose_name='Ответ почтового сервера')
     slug = models.SlugField(unique=True, verbose_name='slug')
-    mailing = models.ForeignKey(Mailing, on_delete=models.SET_NULL, **NULLABLE, verbose_name='Рассылка')
+    mailing = models.ForeignKey(Mailing, on_delete=models.SET_NULL, **NULLABLE, related_name='log',
+                                verbose_name='Рассылка')
 
     def __str__(self):
         return f"{self.date_time_last_attempt} {self.attempt_status}"
